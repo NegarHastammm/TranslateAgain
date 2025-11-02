@@ -17,7 +17,7 @@ export default function LoginCard() {
         <img 
           src="/Images/logo.png" 
           alt="Login Illustration" 
-          className="w-32 h-32 object-cover rounded-full mb-4"
+          className="w-32 h-32 object-cover  mb-4"
         />
 
       
@@ -25,13 +25,13 @@ export default function LoginCard() {
           <label className="block text-gray-700 mb-2">شماره موبایل</label>
           <div className="flex flex-row-reverse">
             <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-              +۹۸
+              ۹۸+
             </span>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="9123456789"
+              placeholder="۹۱۲۳۴۵۶۷۸۹"
               className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400"
             />
           </div>
