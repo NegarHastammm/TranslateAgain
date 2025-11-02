@@ -19,7 +19,7 @@ export default function LoginCard() {
         <img 
           src="/Images/logo.png" 
           alt="Login Illustration" 
-          className="mb-4 w-32 h-32 object-cover rounded-full"
+          className="mb-4 w-32 h-32 object-cover"
         />
 
         <div className="text-center font-bold tracking-0 leading-[100%] mb-6">
