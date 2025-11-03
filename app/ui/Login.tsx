@@ -78,17 +78,17 @@ export default function LoginCard() {
         <img 
           src="/Images/logo.png" 
           alt="Logo"
-          className="mb-4 w-[150px] h-[150px] object-contain"
+          className="mb-4 w-[337px] h-[205px] top-[31px] object-contain"
         />
 
-        <div className="text-center font-bold mb-6">
+        <div className="text-center text-[#1B2559] top-[241] font-bold mb-6">
           <p>دستیار هوشمندسازان ترجمه</p>
         </div>
 
         {/* مرحله ۱: ورود شماره تلفن */}
         {mode === "phone" && (
           <form className="w-full" onSubmit={handlePhoneSubmit}>
-            <label className="block text-gray-700 mb-2 text-right">شماره تلفن خود را وارد کنید</label>
+            <label className="block text-[#000000] font-bold mb-2 text-right">شماره تلفن خود را وارد کنید</label>
             <div className="flex flex-row-reverse mb-4">
               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                 ۹۸+
@@ -112,7 +112,7 @@ export default function LoginCard() {
 
             <p
               onClick={() => setMode("username")}
-              className="text-center text-green-900 mt-10 cursor-pointer hover:underline"
+              className="text-center text-[#278760] font-bold mt-10 cursor-pointer hover:underline"
             >
               ورود از طریق نام کاربری و رمز عبور
             </p>
@@ -122,7 +122,7 @@ export default function LoginCard() {
         {/* مرحله ۲: ورود کد OTP */}
         {mode === "otp" && (
           <form className="w-full flex flex-col items-center" onSubmit={handleOtpSubmit}>
-            <p className="text-gray-700 mb-4 text-center">کد تأیید ۵ رقمی را وارد کنید</p>
+            <p className="text-[#1B2559] font-bold  mb-4 left-[281px]">کد ارسال شده را وارد کنید</p>
 
             <div className="flex justify-center gap-2 mb-6">
               {otp.map((digit, index) => (
@@ -156,7 +156,7 @@ export default function LoginCard() {
 
             <p
               onClick={() => setMode("phone")}
-              className="text-center text-gray-500 mt-3 text-sm cursor-pointer hover:underline"
+              className="text-center text-[#278760] mt-3 text-sm cursor-pointer hover:underline"
             >
               بازگشت به شماره تلفن
             </p>
@@ -166,23 +166,23 @@ export default function LoginCard() {
         {/* مرحله ۳: ورود با نام کاربری */}
         {mode === "username" && (
           <form className="w-full flex flex-col items-center" onSubmit={handleUsernameSubmit}>
-            <label className="block text-gray-700 mb-2 w-full text-right">نام کاربری</label>
+            <label className="block text-[#1B2559] font-bold mb-2 w-full text-right">ورود به پنل</label>
             <input
               dir="rtl"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="نام کاربری خود را وارد کنید"
+              placeholder="نام کاربری"
               className="w-full mb-4 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
             />
 
-            <label className="block text-gray-700 mb-2 w-full text-right">رمز عبور</label>
+            <label className="block text-gray-700 mb-2 w-full text-right hidden">رمز عبور</label>
             <input
               dir="rtl"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="رمز عبور خود را وارد کنید"
+              placeholder="پسورد"
               className="w-full mb-6 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
             />
 
@@ -195,7 +195,7 @@ export default function LoginCard() {
 
             <p
               onClick={() => setMode("phone")}
-              className="text-center text-green-900 mt-10 cursor-pointer hover:underline"
+              className="text-center text-[#278760] font-bold mt-10 cursor-pointer hover:underline"
             >
               ورود از طریق شماره تلفن
             </p>
