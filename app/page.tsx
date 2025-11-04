@@ -1,9 +1,13 @@
+import Link from "next/link";
 import "./globals.css";
-import LoginCard from "./ui/Login";
+import CircleChart from "./ui/CircleChart";
+import MountainChart from "./ui/MountainChart";
+
 export default function Home() {
   return (
-    <div>
-      <LoginCard/>
+    <div className="flex align-center justify-center flex-col text-left">
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/login">Login</Link>
     </div>
   );
 }
