@@ -7,9 +7,17 @@ interface HeaderProps {
   jobTitle: string;
   profileImage?: string;
   toggleSidebar?: () => void;
+  notificationCount?: number; 
 }
 
-const Header: React.FC<HeaderProps> = ({ fullName, jobTitle, profileImage, toggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({
+  fullName,
+  jobTitle,
+  profileImage,
+  toggleSidebar,
+  notificationCount = 0
+}) => {
+
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -29,7 +37,6 @@ const Header: React.FC<HeaderProps> = ({ fullName, jobTitle, profileImage, toggl
           <Menu size={24} />
         </button>
 
-
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full overflow-hidden">
             {profileImage ? (
@@ -47,7 +54,6 @@ const Header: React.FC<HeaderProps> = ({ fullName, jobTitle, profileImage, toggl
         </div>
       </div>
 
-
       <div className="hidden md:flex items-center gap-3">
         <div className="w-10 h-10 rounded-full overflow-hidden">
           {profileImage ? (
@@ -64,9 +70,29 @@ const Header: React.FC<HeaderProps> = ({ fullName, jobTitle, profileImage, toggl
         </div>
       </div>
 
-
       <div className="flex items-center gap-4">
-        <Bell className="w-6 h-6 text-gray-600 dark:text-gray-200 cursor-pointer" />
+
+        <div className="relative cursor-pointer">
+          <Bell
+            className={`
+              w-6 h-6 text-gray-600 dark:text-gray-200
+              ${notificationCount > 0 ? "animate-bell" : ""}
+            `}
+          />
+
+          {notificationCount > 0 && (
+            <span className="
+              absolute -top-1 -right-3 
+              bg-green-600 text-white text-[10px] 
+              rounded-full px-1.5 py-0.5 
+              
+              font-bold
+            ">
+              {notificationCount}
+            </span>
+          )}
+        </div>
+
         <button
           onClick={toggleDarkMode}
           className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 cursor-pointer"
@@ -78,6 +104,7 @@ const Header: React.FC<HeaderProps> = ({ fullName, jobTitle, profileImage, toggl
           )}
         </button>
       </div>
+
     </div>
   );
 };

@@ -38,6 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           jobTitle="مهندس نرم‌افزار"
           profileImage="https://i.pravatar.cc/150?img=3"
           toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+          notificationCount={7}
         />
 
 

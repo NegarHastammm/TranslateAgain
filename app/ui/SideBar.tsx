@@ -46,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-15 backdrop-blur-[1px] z-40 md:hidden transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -57,20 +57,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         className={clsx(
           "fixed top-0 right-0 h-screen w-64 bg-white border-l border-gray-200 z-50 transform transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "translate-x-full",
-          "md:translate-x-0" 
+          "md:translate-x-0"
         )}
       >
         <div className="flex flex-col h-full justify-between overflow-y-auto">
 
           <div>
-            <div className="flex items-center justify-between py-6 px-4 border-b border-gray-100">
-              <img src="/Images/logo.png" alt="لوگو" className="w-32 h-auto object-contain" />
+            <div className="relative py-6 px-4 border-b border-gray-100 flex justify-center items-center">
+              
+              <img src="/Images/logo.png" alt="لوگو" className="w-42 h-auto object-contain mx-auto" />
+
               <button
-                className="md:hidden p-1 rounded hover:bg-gray-200"
+                className="absolute right-4 md:hidden p-1 rounded hover:bg-gray-200"
                 onClick={() => setIsOpen(false)}
               >
                 <X size={24} />
               </button>
+
             </div>
 
 
