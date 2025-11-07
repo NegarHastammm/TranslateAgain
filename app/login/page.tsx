@@ -1,10 +1,11 @@
 import LoginCard from "../ui/Login";
-import "../globals.css";
+import "../globals.css";  
+import styles from "../styles/login.module.css"; 
 
 export default function Home() {
   return (
-    <div>
-    <LoginCard/>
+    <div className={styles.bgCustom}>
+      <LoginCard />
     </div>
   );
 }

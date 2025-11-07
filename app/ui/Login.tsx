@@ -1,4 +1,5 @@
 "use client";
+import styles from "../styles/login.module.css"; 
 import { useState, useRef, useEffect } from "react";
 
 export default function LoginCard() {
@@ -72,9 +73,9 @@ export default function LoginCard() {
 
   // --- UI ---
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="relative bg-white rounded-[15px] shadow-lg p-6 flex flex-col items-center w-[483px] min-h-[596px] z-10">
-        {/* لوگو */}
+    <div className="flex flex-col items-center justify-center min-h-screen ">
+      <div className={`${styles.glassCard} relative flex flex-col items-center w-[483px] min-h-[596px] p-6 z-10`}>
+  {/* لوگو */}
         <img 
           src="/Images/logo.png" 
           alt="Logo"
@@ -204,11 +205,11 @@ export default function LoginCard() {
       </div>
 
       {/* تصویر پایین */}
-      <img 
-        src="/Images/button.png" 
-        alt="Decoration"
-        className="-mt-25 w-[30%] h-32 object-contain"
-      />
+ <img
+    src="/Images/button.png"
+    alt="Decoration"
+    className=" absolute bottom-3 w-[430px] h-[40px] object-cover rounded-lg hidden md:block"
+  />
     </div>
   );
 }

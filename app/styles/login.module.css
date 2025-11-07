@@ -1,0 +1,45 @@
+/* /login.module.css */
+.bgCustom {
+  background-image: url('/Images/bg.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.7;
+}
+/* 
+.bgCard {
+  position: relative;
+  background-image: url('/Images/bgPhone.png');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden; 
+/* }
+
+.bgCard::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* معادل top:0; left:0; right:0; bottom:0; */
+  /* background-color: rgba(255, 255, 255, 0.3); 
+  /* z-index: 0;
+} */
+
+/* .bgCard > * {
+  position: relative;
+  z-index: 1; 
+/* } */ 
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(70px); 
+  -webkit-backdrop-filter: blur(50px); 
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+
+@media (max-width: 768px) {
+  .bgCustom {
+    background-image: url('/Images/bgPhone.png');
+    opacity: 0.5;
+  }
+}
