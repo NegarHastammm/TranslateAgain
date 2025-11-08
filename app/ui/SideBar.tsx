@@ -26,8 +26,8 @@ type SidebarProps = {
 
 const menu: MenuItem[] = [
   { key: "dashboard", label: "داشبورد", icon: <LayoutDashboard size={18} /> },
-  { key: "library", label: "چت یار", icon: <BookMarked size={18} />, active: true },
-  { key: "report", label: "کتابخانه هوشمند", icon: <BarChart3 size={18} /> },
+  { key: "library", label: "کتابخانه هوشمند", icon: <BookMarked size={18} />, active: true },
+  { key: "report", label: "گزارش‌گیری و آمار", icon: <BarChart3 size={18} /> },
   { key: "feedback", label: "گزارش خطا و پیشنهاد", icon: <MailWarning size={18} /> },
   { key: "docs", label: "راهنما و مستندات", icon: <FileText size={18} /> },
 ];
