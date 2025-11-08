@@ -204,12 +204,7 @@ export default function LoginCard() {
         )}
       </div>
 
-      {/* تصویر پایین */}
- <img
-    src="/Images/button.png"
-    alt="Decoration"
-    className=" absolute bottom-3 w-[430px] h-[40px] object-cover rounded-lg hidden md:block"
-  />
+
     </div>
   );
 }
