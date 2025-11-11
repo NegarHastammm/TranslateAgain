@@ -48,7 +48,7 @@ const ChatYar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden" dir="rtl">
+    <div className="-mt-5 flex flex-col h-max-screen h-[83vh] overflow-hidden" dir="rtl">
       {/* هدر */}
       <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white shrink-0">
         {/* سمت چپ: فهرست و همبرگری */}
@@ -66,7 +66,7 @@ const ChatYar: React.FC = () => {
         <div className="relative inline-block text-left">
           <Image src="/Images/gpt.png" alt="gpt" width={100} height={100} className="top-[-6] left-[100] absolute" />
           <button
-            className="flex items-center gap-1 px-3 py-1 font-bold rounded hover:bg-gray-100"
+            className="flex justify-center items-center gap-1 px-3 py-1 font-bold rounded hover:bg-gray-100"
             
             onClick={() => setVersionMenuOpen(!versionMenuOpen)}
           >
