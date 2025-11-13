@@ -158,7 +158,7 @@ const ChatYar: React.FC = () => {
             alt="logo"
             width={56}
             height={56}
-            className="w-14 h-14"
+            className="w-20 h-20 mt-10"
             priority
           />
 
