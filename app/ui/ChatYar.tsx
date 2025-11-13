@@ -65,7 +65,7 @@ const MessageBubble: React.FC<{ role: "user" | "bot"; msg: string }> = ({
           className={`rounded-2xl px-3 py-2 leading-7 break-words ${
             isUser
               ? "bg-emerald-500 text-white rounded-tr-none"
-              : "bg-white text-gray-800 border rounded-tl-none"
+              : "bg-white text-gray-800 border border-gray-100 rounded-tl-none"
           }`}
         >
           {msg}
@@ -141,13 +141,16 @@ const ChatYar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-[83vh] overflow-hidden -mt-5" dir="rtl">
+    <div
+      className="rounded-lg flex flex-col min-h-[83vh] overflow-hidden -mt-3 bg-gradient-to-b from-slate-50 to-white"
+      dir="rtl"
+    >
       {/* ===== هدر ===== */}
-      <header className="flex items-center justify-between p-4 border-b bg-white shrink-0 relative z-30 flex-row-reverse">
+      <header className="flex items-center justify-between p-4 border-b border-gray-100 bg-white shrink-0 relative z-30 flex-row-reverse shadow-sm">
         {/* ورژن بدون فلش */}
         <div className="relative flex items-center gap-3 h-14">
           <button
-            className="px-3 h-full font-bold hover:bg-gray-100 rounded"
+            className="px-3 h-full font-bold hover:bg-gray-100 rounded text-gray-800"
             onClick={() => setVersionMenuOpen((v) => !v)}
           >
             {version}
@@ -163,11 +166,11 @@ const ChatYar: React.FC = () => {
           />
 
           {versionMenuOpen && (
-            <div className="absolute top-full mt-1 right-0 w-44 bg-white border rounded shadow-lg z-50">
+            <div className="absolute top-full mt-1 right-0 w-44 bg-white border border-gray-100 rounded-lg shadow-md z-50">
               {versions.map((v) => (
                 <button
                   key={v}
-                  className="w-full text-right px-3 py-2 hover:bg-gray-100"
+                  className="w-full text-right px-3 py-2 hover:bg-gray-50 text-sm text-gray-700"
                   onClick={() => {
                     setVersion(v);
                     setVersionMenuOpen(false);
@@ -183,7 +186,7 @@ const ChatYar: React.FC = () => {
         {/* دکمه منوی همبرگری */}
         <div className="flex items-center gap-3 h-14">
           <button
-            className="p-2 rounded hover:bg-gray-200 text-xl"
+            className="p-2 rounded hover:bg-gray-100 text-xl text-gray-700"
             onClick={() => setIsChatMenuOpen((v) => !v)}
           >
             ☰
@@ -203,7 +206,7 @@ const ChatYar: React.FC = () => {
                 alt="chatMain"
                 width={383}
                 height={106}
-                className="object-contain opacity-90 w-[180px] sm:w-[280px] md:w-[380px]"
+                className="object-contain opacity-80 w-[180px] sm:w-[280px] md:w-[380px]"
                 priority
               />
             </div>
@@ -214,7 +217,7 @@ const ChatYar: React.FC = () => {
                 alt="bg"
                 width={320}
                 height={220}
-                className="object-contain w-[270px] sm:w-[220px] md:w-[240px]"
+                className="transform rotate-12 object-contain w-[270px] sm:w-[220px] md:w-[380px]"
                 priority
               />
             </div>
@@ -236,25 +239,25 @@ const ChatYar: React.FC = () => {
         {/* نوار اینپوت شناور */}
         <div className="absolute inset-x-0 bottom-4 z-30 pointer-events-none">
           <div className="max-w-5xl mx-auto px-4 md:px-6">
-            <div className="w-full pointer-events-auto flex items-center gap-2 p-3 bg-white shadow-lg border rounded-2xl">
+            <div className="w-full pointer-events-auto flex items-center gap-2 p-3 bg-white shadow-md border border-gray-100 rounded-2xl">
               <input
                 type="text"
-                className="flex-1 border border-gray-200 rounded-md px-3 py-2 outline-none text-sm"
+                className="flex-1 border border-gray-200 rounded-md px-3 py-2 outline-none text-sm bg-gray-50 focus:border-emerald-400 focus:bg-white transition-colors"
                 placeholder="پیام خود را بنویسید..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onInputKeyDown}
               />
               <button
-                className="bg-emerald-500 text-white rounded-md p-2 hover:bg-emerald-600"
+                className="bg-emerald-500 text-white rounded-md p-2 hover:bg-emerald-600 transition-colors"
                 onClick={handleSend}
               >
                 <Send size={18} />
               </button>
-              <button className="p-2 rounded hover:bg-gray-200">
+              <button className="p-2 rounded hover:bg-gray-100 text-gray-600">
                 <Mic size={18} />
               </button>
-              <button className="p-2 rounded hover:bg-gray-200">
+              <button className="p-2 rounded hover:bg-gray-100 text-gray-600">
                 <Paperclip size={18} />
               </button>
             </div>
@@ -274,11 +277,11 @@ const ChatYar: React.FC = () => {
             />
 
             {/* سایدبار */}
-            <aside className="absolute inset-y-0 right-0 w-80 bg-white shadow-2xl border-l z-40 flex flex-col">
+            <aside className="absolute inset-y-0 right-0 w-80 bg-white shadow-2xl border-l border-gray-100 z-40 flex flex-col">
               {/* هدر */}
-              <div className="p-4 border-b flex items-center justify-between h-16">
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between h-16">
                 <button
-                  className="flex items-center gap-2 text-[#1B2559]"
+                  className="flex items-center gap-2 text-[#1B2559] hover:text-emerald-600"
                   onClick={addNewChat}
                 >
                   <Plus size={18} />
@@ -288,8 +291,8 @@ const ChatYar: React.FC = () => {
               </div>
 
               {/* جستجو */}
-              <div className="p-4 border-b">
-                <div className="flex items-center border rounded-md p-2">
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex items-center border border-gray-200 rounded-md p-2 bg-gray-50">
                   <Search className="w-4 h-4 text-[#E6C286] ml-2" />
                   <input
                     type="text"
@@ -309,13 +312,13 @@ const ChatYar: React.FC = () => {
                   return (
                     <div
                       key={chat.id}
-                      className="text-[#1B2559] flex justify-between items-center p-3 border-b hover:bg-gray-50 text-sm cursor-pointer"
+                      className="text-[#1B2559] flex justify-between items-center p-3 border-b border-gray-100 hover:bg-gray-50 text-sm cursor-pointer"
                     >
                       <span className="truncate">{chat.title}</span>
 
                       <div className="relative">
                         <button
-                          className="p-1 rounded hover:bg-gray-200"
+                          className="p-1 rounded hover:bg-gray-100 text-gray-700"
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenMenuId(
@@ -329,18 +332,18 @@ const ChatYar: React.FC = () => {
                         {openMenuId === chat.id && (
                           <div
                             className={`
-                              absolute bg-white border rounded shadow-lg w-40 z-50
+                              absolute bg-white border border-gray-100 rounded-lg shadow-md w-40 z-50
                               left-0
                               ${openUp ? "bottom-full mb-1" : "top-full mt-1"}
                             `}
                           >
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-100 text-gray-700">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700">
                               <Pencil size={14} /> ویرایش عنوان
                             </button>
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-100 text-gray-700">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700">
                               <Pin size={14} /> پین کردن
                             </button>
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-100 text-gray-700">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-red-500">
                               <Trash2 size={14} /> حذف
                             </button>
                           </div>
