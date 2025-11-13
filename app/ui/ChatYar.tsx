@@ -193,7 +193,7 @@ const ChatYar: React.FC = () => {
       </header>
 
       {/* ===== بدنه چت ===== */}
-      <main className="flex-1 relative overflow-hidden bg-gray-50">
+      <main className="flex-1 relative overflow-hidden bg-white">
         {/* پس‌زمینه و لوگو */}
         <div className="absolute inset-0 pointer-events-none z-10">
           <div className="max-w-4xl mx-auto h-full relative">
