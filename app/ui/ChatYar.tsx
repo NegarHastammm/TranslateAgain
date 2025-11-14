@@ -142,7 +142,7 @@ const ChatYar: React.FC = () => {
 
   return (
     <div
-      className="rounded-lg flex flex-col min-h-[83vh] overflow-hidden -mt-3 bg-gradient-to-b from-slate-50 to-white"
+      className="rounded-lg flex flex-col min-h-[83vh] overflow-hidden -mt-3 bg-gradient-to-b from-slate-50 to-white mt-1"
       dir="rtl"
     >
       {/* ===== هدر ===== */}
@@ -161,7 +161,7 @@ const ChatYar: React.FC = () => {
             alt="logo"
             width={56}
             height={56}
-            className="w-20 h-20 mt-10"
+            className="w-20 h-20 mt-10 absolute left-[91] top-[-30]"
             priority
           />
 
@@ -287,7 +287,7 @@ const ChatYar: React.FC = () => {
                   <Plus size={18} />
                   <span className="text-sm font-medium">چت جدید</span>
                 </button>
-                <span className="text-xs text-gray-500">چت‌ها</span>
+                 <Image src="/Images/gpt.png" alt="logo" width={76} height={76} className="absolute left-[12] top-[19]" />
               </div>
 
               {/* جستجو */}

@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       {/* Overlay موبایل */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-15 backdrop-blur-[1px] z-40 md:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-gray-200 bg-opacity-15 backdrop-blur-[1px] z-40 md:hidden transition-opacity duration-300 "
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       <aside
         dir="rtl"
         className={clsx(
-          "fixed top-0 right-0 h-screen w-64 bg-white border-l border-gray-200 z-50 transform transition-transform duration-300 ease-in-out",
+          "fixed  top-0 right-0 h-screen w-64 bg-white border-l border-gray-200 z-50 transform transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "translate-x-full",
           "md:translate-x-0"
         )}
@@ -88,51 +88,52 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <div className="relative py-6 px-4 border-b border-gray-100 flex justify-center items-center">
             <img src="/Images/logo.png" alt="لوگو" className="w-420 h-auto object-contain mx-auto" />
             <button
-              className="absolute right-4 md:hidden p-2 rounded hover:bg-gray-200 transition"
+              className="absolute right-4 md:hidden p-2 rounded hover:bg-gray-200 transition top-[9]"
               onClick={() => setIsOpen(false)}
             >
               <X size={24} />
             </button>
           </div>
 
-          {/* منو */}
-          <nav className="mt-4 relative">
-            <ul className="space-y-1">
-              {menu.map((item) => (
-                <li
-                  key={item.key}
-                  className={clsx(item.key === "report" && "relative")}
-                  onMouseEnter={item.key === "report" ? handleMouseEnter : undefined}
-                  onMouseLeave={item.key === "report" ? handleMouseLeave : undefined}
-                >
-                  <button
-                    ref={item.key === "report" ? reportRef : null}
-                    onClick={item.key === "report" ? handleClick : undefined}
-                    className={clsx(
-                      "flex items-center justify-between w-full text-right pr-4 pl-3 py-3 rounded-md transition-colors duration-150 relative overflow-hidden",
-                      item.active
-                        ? "bg-emerald-50 text-emerald-700 font-semibold"
-                        : "hover:bg-emerald-50 text-gray-700"
-                    )}
-                  >
-                    <div className="flex items-center gap-2 z-10">
-                      {item.icon}
-                      <span className="text-sm font-medium">{item.label}</span>
-                    </div>
-                    {/* فقط آیتم سوم فلش */}
-                    {item.key === "report" && (
-                      <ChevronDown
-                        className={clsx(
-                          "w-4 h-4 text-gray-500 transition-transform duration-300",
-                          submenuOpen ? "rotate-180" : "rotate-0"
-                        )}
-                      />
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
+    {/* منو */}
+<nav className="mt-[-80] relative">
+  <ul className="space-y-0"> 
+    {menu.map((item, index) => (
+      <li key={item.key} className="relative">
+
+        {/* خط جداکننده بین آیتم‌ها */}
+        {index !== 0 && (
+          <div className="w-full h-px bg-[#000000] opacity-15 my-1"></div>
+        )}
+
+        <button
+          ref={item.key === "report" ? reportRef : null}
+          onClick={item.key === "report" ? handleClick : undefined}
+          className={clsx(
+            "flex items-center justify-between w-full text-right pr-4 pl-3 py-3 rounded-md transition-colors duration-150 relative overflow-hidden",
+            item.active
+              ? "bg-emerald-50 text-emerald-700 font-semibold"
+              : "hover:bg-emerald-50 text-gray-700"
+          )}
+        >
+          <div className="flex items-center gap-2 z-10">
+            {item.icon}
+            <span className="text-sm font-medium">{item.label}</span>
+          </div>
+
+          {item.key === "report" && (
+            <ChevronDown
+              className={clsx(
+                "w-4 h-4 text-gray-500 transition-transform duration-300",
+                submenuOpen ? "rotate-180" : "rotate-0"
+              )}
+            />
+          )}
+        </button>
+      </li>
+    ))}
+  </ul>
+</nav>
 
           {/* دانلود و خروج */}
           <div className="px-4 py-6 border-t border-gray-100 space-y-4">
@@ -151,22 +152,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
       {/* ساب‌منوی floating */}
       {submenuOpen && (
-        <ul
-          className="fixed right-64 w-48 bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl z-50 opacity-0 scale-95 translate-x-2 transition-all duration-300 ease-out"
-          style={{
-            top: submenuTop,
-            opacity: submenuOpen ? 1 : 0,
-            transform: submenuOpen ? "scale(1) translateX(0)" : "scale(0.95) translateX(8px)",
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-150">جست و جوی هوشمند</li>
-          <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-150">مطالعه آنلاین</li>
-          <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-150">مدیریت منابع</li>
-          <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-150">یادداشت های من</li>
-        </ul>
-      )}
+      
+  <ul
+    className="fixed right-64 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl z-50 transition-all duration-200 ease-out"
+    style={{
+      top: submenuTop + 6,
+      opacity: submenuOpen ? 1 : 0,
+      transform: submenuOpen ? "scale(1)" : "scale(0.95)",
+      pointerEvents: submenuOpen ? "auto" : "none",
+    }}
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >
+    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">جست‌وجوی هوشمند</li>
+    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">مطالعه آنلاین</li>
+    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">مدیریت منابع</li>
+    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">یادداشت‌های من</li>
+  </ul>
+)}
+
     </>
   );
 };
