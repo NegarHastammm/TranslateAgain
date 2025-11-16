@@ -14,6 +14,8 @@ import {
   UserCog
 } from "lucide-react";
 
+
+
 type MenuItem = {
   key: string;
   label: string;
@@ -64,6 +66,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     }
   };
 
+  const handleReportEnter = () => {
+  if (window.innerWidth >= 768 && reportRef.current) {
+    const rect = reportRef.current.getBoundingClientRect();
+    setSubmenuTop(rect.top);
+    setSubmenuOpen(true);
+  }
+};
+
+const handleReportLeave = () => {
+  if (window.innerWidth >= 768) {
+    setSubmenuOpen(false);
+  }
+};
+
+const handleReportClick = () => {
+  if (window.innerWidth < 768 && reportRef.current) {
+    const rect = reportRef.current.getBoundingClientRect();
+    setSubmenuTop(rect.top);
+    setSubmenuOpen((prev) => !prev);
+  }
+};
+
+  
+
   return (
     <>
       {/* Overlay موبایل */}
@@ -106,30 +132,33 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <div className="w-full h-px bg-[#000000] opacity-15 my-1"></div>
         )}
 
-        <button
-          ref={item.key === "report" ? reportRef : null}
-          onClick={item.key === "report" ? handleClick : undefined}
-          className={clsx(
-            "flex items-center justify-between w-full text-right pr-4 pl-3 py-3 rounded-md transition-colors duration-150 relative overflow-hidden",
-            item.active
-              ? "bg-emerald-50 text-emerald-700 font-semibold"
-              : "hover:bg-emerald-50 text-gray-700"
-          )}
-        >
-          <div className="flex items-center gap-2 z-10">
-            {item.icon}
-            <span className="text-sm font-medium">{item.label}</span>
-          </div>
+      <button
+  ref={item.key === "report" ? reportRef : null}
+  onMouseEnter={item.key === "report" ? handleReportEnter : undefined}
+  onMouseLeave={item.key === "report" ? handleReportLeave : undefined}
+  onClick={item.key === "report" ? handleReportClick : undefined}
+  className={clsx(
+    "flex items-center justify-between w-full text-right pr-4 pl-3 py-3 rounded-md transition-colors duration-150",
+    item.active
+      ? "bg-emerald-50 text-emerald-700 font-semibold"
+      : "hover:bg-emerald-50 text-gray-700"
+  )}
+>
+  <div className="flex items-center gap-2">
+    {item.icon}
+    <span className="text-sm font-medium">{item.label}</span>
+  </div>
 
-          {item.key === "report" && (
-            <ChevronDown
-              className={clsx(
-                "w-4 h-4 text-gray-500 transition-transform duration-300",
-                submenuOpen ? "rotate-180" : "rotate-0"
-              )}
-            />
-          )}
-        </button>
+  {item.key === "report" && (
+    <ChevronDown
+      className={clsx(
+        "w-4 h-4 text-gray-500 transition-transform duration-300",
+        submenuOpen ? "rotate-180" : "rotate-0"
+      )}
+    />
+  )}
+</button>
+
       </li>
     ))}
   </ul>
@@ -151,18 +180,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       </aside>
 
       {/* ساب‌منوی floating */}
-      {submenuOpen && (
-      
+  {submenuOpen && (
   <ul
     className="fixed right-64 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl z-50 transition-all duration-200 ease-out"
-    style={{
-      top: submenuTop + 6,
-      opacity: submenuOpen ? 1 : 0,
-      transform: submenuOpen ? "scale(1)" : "scale(0.95)",
-      pointerEvents: submenuOpen ? "auto" : "none",
-    }}
-    onMouseEnter={handleMouseEnter}
-    onMouseLeave={handleMouseLeave}
+    style={{ top: submenuTop + 6 }}
+    onMouseEnter={() => window.innerWidth >= 768 && setSubmenuOpen(true)}
+    onMouseLeave={() => window.innerWidth >= 768 && setSubmenuOpen(false)}
   >
     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">جست‌وجوی هوشمند</li>
     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">مطالعه آنلاین</li>
@@ -170,6 +193,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">یادداشت‌های من</li>
   </ul>
 )}
+
 
     </>
   );
