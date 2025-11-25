@@ -227,7 +227,7 @@ const ChatYar: React.FC = () => {
         {/* پیام‌ها */}
         <div
           ref={scrollRef}
-          className="relative w-full h-full overflow-y-auto p-4 md:p-6 z-20 pb-32"
+          className="relative w-full overflow-y-auto p-4 md:p-6 z-20 pb-32 max-h-[calc(83vh-80px)]" // ← اضافه شد max-height
         >
           <div className="max-w-4xl mx-auto">
             {msgs.map((m) => (
