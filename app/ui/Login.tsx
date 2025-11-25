@@ -1,5 +1,5 @@
 "use client";
-import styles from "../styles/login.module.css"; 
+import styles from "../styles/login.module.css";
 import { useState, useRef, useEffect } from "react";
 
 export default function LoginCard() {
@@ -10,8 +10,10 @@ export default function LoginCard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // --- ایجاد ref برای هر فیلد OTP جهت کنترل فوکوس ---
-  const otpRefs = Array.from({ length: 5 }, () => useRef<HTMLInputElement>(null));
+  // --- ایجاد ref برای فیلدهای OTP ---
+  const otpRefs = Array.from({ length: 5 }, () =>
+    useRef<HTMLInputElement>(null)
+  );
 
   // --- ارسال شماره تلفن ---
   const handlePhoneSubmit = (e: React.FormEvent) => {
@@ -20,37 +22,33 @@ export default function LoginCard() {
       alert("لطفاً شماره تلفن معتبر وارد کنید (مثلاً 09123456789).");
       return;
     }
-    // شبیه‌سازی ارسال پیامک OTP
     setMode("otp");
   };
 
-  // --- کنترل ورودی OTP ---
+  // --- تغییر OTP ---
   const handleOtpChange = (value: string, index: number) => {
     if (/^\d?$/.test(value)) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // حرکت به فیلد بعدی از چپ به راست
       if (value && index < 4) otpRefs[index + 1].current?.focus();
     }
   };
 
-  // --- کنترل دکمه Backspace ---
+  // --- Backspace OTP ---
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       otpRefs[index - 1].current?.focus();
     }
   };
 
-  // --- فوکوس خودکار روی فیلد اول هنگام ورود به مرحله OTP ---
+  // --- فوکوس هنگام ورود به مرحله OTP ---
   useEffect(() => {
-    if (mode === "otp") {
-      otpRefs[0].current?.focus(); // شروع از فیلد سمت چپ
-    }
+    if (mode === "otp") otpRefs[0].current?.focus();
   }, [mode]);
 
-  // --- بررسی و ارسال OTP ---
+  // --- ارسال OTP ---
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const code = otp.join("");
@@ -73,23 +71,31 @@ export default function LoginCard() {
 
   // --- UI ---
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen ">
-      <div className={`${styles.glassCard} relative flex flex-col items-center w-[483px] min-h-[596px] p-6 z-10`}>
-  {/* لوگو */}
-        <img 
-          src="/Images/logo.png" 
+    <div className="flex flex-col items-center justify-center min-h-screen px-4">
+      <div
+        className={`${styles.glassCard} 
+        relative flex flex-col items-center 
+        w-full max-w-sm md:max-w-md p-6 rounded-xl`}
+      >
+
+        {/* لوگو */}
+        <img
+          src="/Images/logo.png"
           alt="Logo"
-          className="mb-4 w-[337px] h-[205px] top-[31px] object-contain"
+          className="mb-4 w-40 h-auto md:w-60 object-contain"
         />
 
-        <div className="text-center text-[#1B2559] top-[241] font-bold mb-6">
+        <div className="text-center text-[#1B2559] font-bold mb-4 md:mb-6">
           <p>دستیار هوشمندسازان ترجمه</p>
         </div>
 
-        {/* مرحله ۱: ورود شماره تلفن */}
+        {/* مرحله ۱: شماره تلفن */}
         {mode === "phone" && (
           <form className="w-full" onSubmit={handlePhoneSubmit}>
-            <label className="block text-[#000000] font-bold mb-2 text-right">شماره تلفن خود را وارد کنید</label>
+            <label className="block text-[#000000] font-bold mb-2 text-right">
+              شماره تلفن خود را وارد کنید
+            </label>
+
             <div className="flex flex-row-reverse mb-4">
               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                 ۹۸+
@@ -100,57 +106,65 @@ export default function LoginCard() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="9123456789"
-                className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
+                className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 focus:outline-none 
+                focus:ring-2 focus:ring-green-900 focus:border-green-900"
               />
             </div>
 
-            <button 
+            <button
               type="submit"
-              className="w-full mt-2 text-white py-2 hover:bg-green-700 transition h-[62px] rounded-[7px] bg-[#278760]"
+              className="w-full mt-2 text-white py-2 hover:bg-green-700 transition 
+              h-[55px] md:h-[62px] rounded-[7px] bg-[#278760]"
             >
               ارسال پیامک
             </button>
 
             <p
               onClick={() => setMode("username")}
-              className="text-center text-[#278760] font-bold mt-10 cursor-pointer hover:underline"
+              className="text-center text-[#278760] font-bold mt-8 cursor-pointer hover:underline"
             >
               ورود از طریق نام کاربری و رمز عبور
             </p>
           </form>
         )}
 
-        {/* مرحله ۲: ورود کد OTP */}
+        {/* مرحله ۲: OTP */}
         {mode === "otp" && (
           <form className="w-full flex flex-col items-center" onSubmit={handleOtpSubmit}>
-            <p className="text-[#1B2559] font-bold  mb-4 left-[281px]">کد ارسال شده را وارد کنید</p>
+            <p className="text-[#1B2559] font-bold mb-4">کد ارسال شده را وارد کنید</p>
 
             <div className="flex justify-center gap-2 mb-6">
               {otp.map((digit, index) => (
                 <input
-                  dir="ltr"
                   key={index}
                   ref={otpRefs[index]}
                   type="text"
                   maxLength={1}
+                  dir="ltr"
                   value={digit}
                   onChange={(e) => handleOtpChange(e.target.value, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
-                  className="w-12 h-12 text-center border border-gray-300 rounded-md text-lg focus:ring-2 focus:ring-green-900 focus:border-green-900"
+                  className="
+                    w-12 h-12 md:w-14 md:h-14
+                    text-center border border-gray-300 rounded-md
+                    text-lg md:text-xl
+                    focus:ring-2 focus:ring-green-900 focus:border-green-900
+                  "
                 />
               ))}
             </div>
 
-            <button 
+            <button
               type="submit"
-              className="w-full text-white py-2 hover:bg-green-700 transition h-[62px] rounded-[7px] bg-[#278760]"
+              className="w-full text-white py-2 hover:bg-green-700 transition 
+              h-[55px] md:h-[62px] rounded-[7px] bg-[#278760]"
             >
               تأیید
             </button>
 
             <p
               onClick={() => setMode("username")}
-              className="text-center text-green-900 mt-10 cursor-pointer hover:underline"
+              className="text-center text-green-900 mt-8 cursor-pointer hover:underline"
             >
               ورود با نام کاربری و رمز عبور
             </p>
@@ -159,7 +173,7 @@ export default function LoginCard() {
               onClick={() => setMode("phone")}
               className="text-center text-[#278760] mt-3 text-sm cursor-pointer hover:underline"
             >
-              بازگشت به شماره تلفن
+              بازگشت
             </p>
           </form>
         )}
@@ -167,49 +181,48 @@ export default function LoginCard() {
         {/* مرحله ۳: ورود با نام کاربری */}
         {mode === "username" && (
           <form className="w-full flex flex-col items-center" onSubmit={handleUsernameSubmit}>
-            <label className="block text-[#1B2559] font-bold mb-2 w-full text-right">ورود به پنل</label>
+            <label className="block text-[#1B2559] font-bold mb-2 w-full text-right">
+              ورود به پنل
+            </label>
+
             <input
               dir="rtl"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="نام کاربری"
-              className="w-full mb-4 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
+              className="w-full mb-4 border border-gray-300 rounded-md px-3 py-2 
+              focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
             />
 
-            <label className="block text-gray-700 mb-2 w-full text-right hidden">رمز عبور</label>
             <input
               dir="rtl"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="پسورد"
-              className="w-full mb-6 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
+              className="w-full mb-6 border border-gray-300 rounded-md px-3 py-2 
+              focus:outline-none focus:ring-2 focus:ring-green-900 focus:border-green-900"
             />
 
-            <button 
+            <button
               type="submit"
-              className="w-full text-white py-2 hover:bg-green-700 transition h-[62px] rounded-[7px] bg-[#278760]"
+              className="w-full text-white py-2 hover:bg-green-700 transition 
+              h-[55px] md:h-[62px] rounded-[7px] bg-[#278760]"
             >
               ورود
             </button>
 
             <p
               onClick={() => setMode("phone")}
-              className="text-center text-[#278760] font-bold mt-10 cursor-pointer hover:underline"
+              className="text-center text-[#278760] font-bold mt-8 cursor-pointer hover:underline"
             >
               ورود از طریق شماره تلفن
             </p>
           </form>
         )}
-      </div>
 
-      {/* تصویر پایین */}
- <img
-    src="/Images/button.png"
-    alt="Decoration"
-    className=" absolute bottom-3 w-[430px] h-[40px] object-cover rounded-lg hidden md:block"
-  />
+      </div>
     </div>
   );
 }
