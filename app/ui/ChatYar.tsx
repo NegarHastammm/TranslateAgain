@@ -37,7 +37,7 @@ const initialMsgs: MsgBox[] = [
 
 const versions = ["ChatGPT 3.5", "ChatGPT 4", "ChatGPT 4 Turbo"];
 
-// --- پیام‌ها ---
+// پیام‌ها
 const MessageBubble: React.FC<{ role: "user" | "bot"; msg: string }> = ({
   role,
   msg,
@@ -45,7 +45,7 @@ const MessageBubble: React.FC<{ role: "user" | "bot"; msg: string }> = ({
   const isUser = role === "user";
   return (
     <div
-      className={`w-full flex mb-2 ${
+      className={`w-full flex mb-3 ${
         isUser ? "justify-end" : "justify-start"
       }`}
     >
@@ -61,6 +61,7 @@ const MessageBubble: React.FC<{ role: "user" | "bot"; msg: string }> = ({
         >
           {isUser ? "U" : "B"}
         </div>
+
         <div
           className={`rounded-2xl px-3 py-2 leading-7 break-words ${
             isUser
@@ -75,7 +76,7 @@ const MessageBubble: React.FC<{ role: "user" | "bot"; msg: string }> = ({
   );
 };
 
-// --- کامپوننت اصلی ---
+// کامپوننت اصلی
 const ChatYar: React.FC = () => {
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -100,6 +101,7 @@ const ChatYar: React.FC = () => {
     setMsgs([]);
   };
 
+  // همیشه اسکرول به آخر پیام‌ها برود
   useEffect(() => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -145,9 +147,8 @@ const ChatYar: React.FC = () => {
       className="rounded-lg flex flex-col min-h-[83vh] overflow-hidden -mt-3 bg-gradient-to-b from-slate-50 to-white mt-1"
       dir="rtl"
     >
-      {/* ===== هدر ===== */}
+      {/* هدر */}
       <header className="flex items-center justify-between p-4 border-b border-gray-100 bg-white shrink-0 relative z-30 flex-row-reverse shadow-sm">
-        {/* ورژن بدون فلش */}
         <div className="relative flex items-center gap-3 h-14">
           <button
             className="px-3 h-full font-bold hover:bg-gray-100 rounded text-gray-800"
@@ -183,7 +184,6 @@ const ChatYar: React.FC = () => {
           )}
         </div>
 
-        {/* دکمه منوی همبرگری */}
         <div className="flex items-center gap-3 h-14">
           <button
             className="p-2 rounded hover:bg-gray-100 text-xl text-gray-700"
@@ -195,9 +195,9 @@ const ChatYar: React.FC = () => {
         </div>
       </header>
 
-      {/* ===== بدنه چت ===== */}
+      {/* بدنه چت */}
       <main className="flex-1 relative overflow-hidden bg-white">
-        {/* پس‌زمینه و لوگو */}
+        {/* بک‌گراند */}
         <div className="absolute inset-0 pointer-events-none z-10">
           <div className="max-w-4xl mx-auto h-full relative">
             <div className="absolute inset-0 grid place-items-center">
@@ -227,16 +227,19 @@ const ChatYar: React.FC = () => {
         {/* پیام‌ها */}
         <div
           ref={scrollRef}
-          className="relative w-full overflow-y-auto p-4 md:p-6 z-20 pb-32 max-h-[calc(83vh-80px)]" // ← اضافه شد max-height
+          className="relative w-full overflow-y-auto p-4 md:p-6 z-20 pb-56 max-h-[calc(83vh-80px)]"
         >
           <div className="max-w-4xl mx-auto">
             {msgs.map((m) => (
               <MessageBubble key={m.id} role={m.role} msg={m.msg} />
             ))}
+
+            {/* فاصله امن قبل از اینپوت */}
+            <div className="h-24"></div>
           </div>
         </div>
 
-        {/* نوار اینپوت شناور */}
+        {/* نوار اینپوت */}
         <div className="absolute inset-x-0 bottom-4 z-30 pointer-events-none">
           <div className="max-w-5xl mx-auto px-4 md:px-6">
             <div className="w-full pointer-events-auto flex items-center gap-2 p-3 bg-white shadow-md border border-gray-100 rounded-2xl">
@@ -264,10 +267,9 @@ const ChatYar: React.FC = () => {
           </div>
         </div>
 
-        {/* ===== سایدبار چت ===== */}
+        {/* سایدبار */}
         {isChatMenuOpen && (
           <>
-            {/* بک‌دراپ */}
             <div
               className="absolute inset-0 bg-black/20 z-30"
               onClick={() => {
@@ -276,9 +278,7 @@ const ChatYar: React.FC = () => {
               }}
             />
 
-            {/* سایدبار */}
             <aside className="absolute inset-y-0 right-0 w-80 bg-white shadow-2xl border-l border-gray-100 z-40 flex flex-col">
-              {/* هدر */}
               <div className="p-4 border-b border-gray-100 flex items-center justify-between h-16">
                 <button
                   className="flex items-center gap-2 text-[#1B2559] hover:text-emerald-600"
@@ -287,10 +287,15 @@ const ChatYar: React.FC = () => {
                   <Plus size={18} />
                   <span className="text-sm font-medium">چت جدید</span>
                 </button>
-                 <Image src="/Images/gpt.png" alt="logo" width={76} height={76} className="absolute left-[12] top-[19]" />
+                <Image
+                  src="/Images/gpt.png"
+                  alt="logo"
+                  width={76}
+                  height={76}
+                  className="absolute left-[12] top-[19]"
+                />
               </div>
 
-              {/* جستجو */}
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center border border-gray-200 rounded-md p-2 bg-gray-50">
                   <Search className="w-4 h-4 text-[#E6C286] ml-2" />
@@ -304,10 +309,9 @@ const ChatYar: React.FC = () => {
                 </div>
               </div>
 
-              {/* لیست چت‌ها */}
               <div className="flex-1 overflow-y-auto relative">
                 {filteredChats.map((chat, index) => {
-                  const openUp = index > filteredChats.length - 3; // آیتم‌های آخر: منو به بالا
+                  const openUp = index > filteredChats.length - 3;
 
                   return (
                     <div
