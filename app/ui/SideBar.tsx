@@ -66,7 +66,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           "md:translate-x-0"
         )}
       >
-        <div className="flex flex-col h-full justify-between overflow-y-auto">
+       <div className="flex flex-col h-full justify-between">
+
+
+
+
+
 
           {/* لوگو */}
           <div className="relative py-6 px-4 border-b border-gray-100 flex justify-center items-center">
@@ -80,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           </div>
 
           {/* منو — مشکل اینجا بود (mt-[-80]) → حذف شد */}
-          <nav className="relative mt-2">
+          <nav className="flex-1 overflow-y-auto mt-2">
             <ul className="space-y-0">
               {menu.map((item, index) => (
                 <li key={item.key} className="relative">
@@ -116,7 +121,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                   {item.key === "report" && (
                     <div
                       className={clsx(
-                        "overflow-hidden transition-all duration-300",
+                        "overflow-hidden transition-[max-height,opacity] duration-300"
+,
                         submenuOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
                       )}
                     >
