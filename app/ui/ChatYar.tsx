@@ -212,14 +212,7 @@ const ChatYar: React.FC = () => {
             </div>
 
             <div className="absolute -bottom-1 -left-26">
-              <Image
-                src="/Images/bg.png"
-                alt="bg"
-                width={320}
-                height={220}
-                className="transform rotate-12 object-contain w-[270px] sm:w-[220px] md:w-[380px]"
-                priority
-              />
+          
             </div>
           </div>
         </div>

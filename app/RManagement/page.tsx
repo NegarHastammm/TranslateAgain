@@ -11,12 +11,13 @@ import { Home as HomeIconLucide, Settings } from "lucide-react";
 import Image from "next/image";
 const HomeIcon = () => <HomeIconLucide className="w-5 h-5 text-gray-500" />;
 const SettingsIcon = () => <Settings className="w-5 h-5 text-gray-500" />;
-import ChatYar from "../ui/ChatYar";
+
+import ResourceManagement from "../ui/ResourceManagement";
 
 const Home: React.FC = () => {
   return (
     <>
-    <ChatYar />
+    <ResourceManagement />
     
     </>
 

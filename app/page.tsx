@@ -10,6 +10,7 @@ export default function Home() {
       <Link href="/dashboard">Dashboard</Link>
       <Link href="/login">Login</Link>
       <Link href="/chatSection">ChatYar</Link>
+      <Link href="/RManagement">Resource Management</Link>
     </div>
   );
 }
