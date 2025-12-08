@@ -1,635 +1,510 @@
-"use client";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  FilePen,
+  Trash2,
+  Plus,
+  X,
+  CheckCircle,
+  AlertTriangle,
+  Loader2,
+  Search,
+  Library,
+  Info,
+  CircleCheck,
+  CircleOff,
+} from "lucide-react";
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { 
-  Search, 
-  Plus, 
-  LibraryBig, 
-  Pencil, 
-  Trash2, 
-  Filter,
-  CheckCircle2,
-  XCircle,
-  X // آیکون بسته شدن
-} from 'lucide-react';
-
-// تعریف اینترفیس برای داده‌های کتاب/منبع
-interface Resource {
+// ================== 1. TYPES & MOCK DATA (20+ items for pagination testing) ==================
+interface Profile {
   id: number;
-  rowNumber: string;
-  bookName: string;
-  authorName: string;
-  publisher: string;
-  deathYear: string; 
-  subject: string;
-  libraryDate: string;
-  language: string;
-  contents: string;
-  isAvailable: boolean;
+  name: string;
+  description: string;
+  active: boolean;
+  createdAt: string;
 }
 
-// داده‌های نمونه (Mock Data)
-const initialData: Resource[] = [
-  {
-    id: 1,
-    rowNumber: "۰۰۱",
-    bookName: "طراحی سیستم‌های شی‌گرا و الگوهای معماری نرم‌افزارهای توزیع‌شده (عنوان بسیار طولانی برای تست ریسپانسیو بودن کامل)", 
-    authorName: "الکساندر شولتز",
-    publisher: "نشر علوم",
-    deathYear: "---",
-    subject: "مهندسی نرم‌افزار",
-    libraryDate: "۱۴۰۲/۰۵/۱۰",
-    language: "فارسی",
-    contents: "CD آموزشی به همراه فصل‌های تکمیلی و توضیحات دقیق فنی و چندین ضمیمه دیگر که باعث طولانی شدن متن می‌شود.",
-    isAvailable: true,
-  },
-  {
-    id: 2,
-    rowNumber: "۰۰۲",
-    bookName: "Clean Code: A Handbook of Agile Software Craftsmanship", 
-    authorName: "Robert C. Martin",
-    publisher: "Prentice Hall",
-    deathYear: "---",
-    subject: "برنامه‌نویسی پیشرفته",
-    libraryDate: "۱۴۰۲/۰۶/۱۲",
-    language: "انگلیسی",
-    contents: "PDF ضمیمه، سورس کد و چندین فصل تکمیلی دیگر.",
-    isAvailable: true,
-  },
-  {
-  id: 3,
-  rowNumber: "۰۰۳",
-  bookName: "دیوان حافظ",
-  authorName: "خواجه شمس‌الدین محمد حافظ شیرازی",
-  publisher: "نشر ققنوس",
-  deathYear: "۷۹۲ ه.ق",
-  subject: "ادبیات کلاسیک",
-  libraryDate: "۱۴۰۱/۱۱/۲۰",
-  language: "فارسی",
-  isAvailable: false,
-  contents: "نسخه چاپی نفیس با جلد سخت و قطع جیبی.",
-},
-{
-  id: 4,
-  rowNumber: "۰۰۴",
-  bookName: "مبانی داده‌کاوی",
-  authorName: "جعفر نژاد قمی",
-  publisher: "نشر دانشگاهی",
-  deathYear: "---",
-  subject: "علوم داده",
-  libraryDate: "۱۴۰۳/۰۱/۱۵",
-  language: "فارسی",
-  contents: "دیتاست کامل برای تمرین به همراه توضیحات مفصل.",
-  isAvailable: true,
-},
+const mockProfiles: Profile[] = [
+  { id: 101, name: "پروفایل منابع داخلی", description: "کتاب‌ها و مقالات داخلی سازمان برای استفاده‌ی کارکنان.", active: true, createdAt: "1403/01/05" },
+  { id: 102, name: "پروفایل منابع خارجی", description: "مجلات علمی بین‌المللی و پایان‌نامه‌های دانشگاهی.", active: true, createdAt: "1403/01/10" },
+  { id: 103, name: "پروفایل منابع آموزشی", description: "ویدئوها و پادکست‌های آموزشی سازمانی.", active: false, createdAt: "1403/01/15" },
+  { id: 104, name: "پروفایل کتاب‌های مدیریتی", description: "کتاب‌های مرتبط با مدیریت، رهبری و توسعه فردی.", active: true, createdAt: "1403/01/20" },
+  { id: 105, name: "پروفایل کتاب‌های فنی", description: "کتاب‌های تخصصی حوزه IT، برنامه‌نویسی و شبکه.", active: true, createdAt: "1403/01/25" },
+  { id: 106, name: "پروفایل مقالات کنفرانسی", description: "مقالات ارائه‌شده در کنفرانس‌های داخلی و خارجی.", active: true, createdAt: "1403/02/01" },
+  { id: 107, name: "پروفایل گزارش‌های داخلی", description: "گزارش‌های تحقیقاتی و تحلیلی واحدهای مختلف سازمان.", active: false, createdAt: "1403/02/05" },
+  { id: 108, name: "پروفایل پایان‌نامه‌ها", description: "پایان‌نامه‌های منتخب مرتبط با حوزه فعالیت سازمان.", active: true, createdAt: "1403/02/10" },
+  { id: 109, name: "پروفایل منابع مالی", description: "کتاب‌ها و گزارش‌های مرتبط با مالی و حسابداری.", active: true, createdAt: "1403/02/15" },
+  { id: 110, name: "پروفایل منابع حقوقی", description: "قوانین، مقررات و اسناد حقوقی مورد نیاز.", active: true, createdAt: "1403/02/20" },
+  { id: 111, name: "پروفایل منابع بازاریابی", description: "کتاب‌ها و مقالات بازاریابی، برندینگ و فروش.", active: true, createdAt: "1403/02/25" },
+  { id: 112, name: "پروفایل منابع انسانی", description: "منابع مرتبط با جذب، آموزش و ارزیابی کارکنان.", active: false, createdAt: "1403/03/01" },
+  { id: 113, name: "پروفایل منابع استراتژی", description: "کتاب‌ها و مقالات حوزه برنامه‌ریزی و استراتژی.", active: true, createdAt: "1403/03/05" },
+  { id: 114, name: "پروفایل مجلات ماهانه", description: "اشتراک مجلات تخصصی که ماهانه دریافت می‌شود.", active: true, createdAt: "1403/03/10" },
+  { id: 115, name: "پروفایل روزنامه‌ها", description: "آرشیو روزنامه‌های مهم کشور.", active: false, createdAt: "1403/03/15" },
+  { id: 116, name: "پروفایل کتاب‌های عمومی", description: "کتاب‌های عمومی برای مطالعه آزاد کارکنان.", active: true, createdAt: "1403/03/20" },
+  { id: 117, name: "پروفایل منابع دیجیتال", description: "کتاب‌های الکترونیکی، PDF و منابع آنلاین.", active: true, createdAt: "1403/03/25" },
+  { id: 118, name: "پروفایل منابع تاریخی", description: "کتاب‌ها و اسناد مرتبط با تاریخچه سازمان و صنعت.", active: true, createdAt: "1403/04/01" },
+  { id: 119, name: "پروفایل منابع پژوهشی", description: "پروژه‌ها و طرح‌های پژوهشی انجام‌شده.", active: true, createdAt: "1403/04/05" },
+  { id: 120, name: "پروفایل منابع چندرسانه‌ای", description: "فایل‌های صوتی و تصویری شامل وبینارها، سمینارها و دوره‌های ضبط‌شده.", active: true, createdAt: "1403/04/10" },
 ];
 
-// Map of field names to their Persian labels for rendering in the form
-const fieldLabels: Record<keyof Omit<Resource, 'id' | 'isAvailable'>, string> = {
-  rowNumber: "شماره ردیف",
-  bookName: "نام کتاب",
-  authorName: "نام نویسنده",
-  publisher: "نام ناشر",
-  deathYear: "سال وفات/انتشار",
-  subject: "موضوع",
-  libraryDate: "تاریخ ثبت",
-  language: "زبان",
-  contents: "محتویات جانبی",
-};
+// ================== 2. MOCK API SERVICE ==================
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+class MockApiService {
+  private data: Profile[] = [...mockProfiles];
+  private nextId = 121;
 
-// ----------------------------------------------------------------------------------
-// Edit Resource Modal Component 
-// ----------------------------------------------------------------------------------
-interface EditModalProps {
-  resource: Resource;
-  onClose: () => void;
-  onSave: (updatedResource: Resource) => void;
+  async getAllResourceProfiles(): Promise<Profile[]> {
+    await delay(500);
+    return [...this.data];
+  }
+
+  async createResourceProfile(profileData: Omit<Profile, "id" | "createdAt">): Promise<Profile> {
+    await delay(500);
+    const newProfile: Profile = {
+      id: this.nextId++,
+      ...profileData,
+      createdAt: new Date().toLocaleDateString("fa-IR"),
+    };
+    this.data.push(newProfile);
+    return newProfile;
+  }
+
+  async updateResourceProfile(updatedProfile: Profile): Promise<Profile> {
+    await delay(500);
+    const index = this.data.findIndex((p) => p.id === updatedProfile.id);
+    if (index !== -1) {
+      this.data[index] = updatedProfile;
+      return updatedProfile;
+    }
+    throw new Error("Profile not found");
+  }
+
+  async deleteResourceProfile(id: number): Promise<void> {
+    await delay(500);
+    this.data = this.data.filter((p) => p.id !== id);
+  }
 }
 
-const EditResourceModal: React.FC<EditModalProps> = ({ resource, onClose, onSave }) => {
-  const [formData, setFormData] = useState<Resource>(resource);
+const apiService = new MockApiService();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    // Handle checkbox separately
-    const updatedValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-    setFormData(prev => ({
+// ================== 3. SMALL REUSABLE COMPONENTS ==================
+interface TooltipButtonProps {
+  icon: "edit" | "delete";
+  label: string;
+  onClick: () => void;
+}
+
+const TooltipButton: React.FC<TooltipButtonProps> = ({ icon, label, onClick }) => {
+  const IconComponent = icon === "edit" ? FilePen : Trash2;
+  const baseClasses = "p-2 rounded-full transition-all duration-200 active:scale-90 border inline-flex items-center justify-center";
+  const editClasses = "border-indigo-300 text-indigo-500 hover:bg-indigo-50 hover:border-indigo-500 hover:shadow-md hover:shadow-indigo-100";
+  const deleteClasses = "border-red-300 text-red-500 hover:bg-red-50 hover:border-red-500 hover:shadow-md hover:shadow-red-100";
+  const finalClasses = icon === "edit" ? `${baseClasses} ${editClasses}` : `${baseClasses} ${deleteClasses}`;
+
+  return (
+    <button onClick={onClick} title={label} className={finalClasses}>
+      <IconComponent size={16} />
+    </button>
+  );
+};
+
+interface ConfirmationModalProps {
+  title: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ title, message, onConfirm, onCancel }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onCancel}>
+    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      <div className="p-6 text-center">
+        <AlertTriangle size={40} className="text-red-500 mx-auto mb-4 drop-shadow-sm" />
+        <h3 className="text-lg font-bold text-gray-800 mb-2">{title}</h3>
+        <p className="text-sm text-gray-600 mb-6 leading-relaxed">{message}</p>
+        <div className="flex justify-center gap-3">
+          <button onClick={onCancel} className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition-all active:scale-95">
+            انصراف
+          </button>
+          <button onClick={onConfirm} className="px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-xl shadow-md hover:bg-red-700 transition-all active:scale-95">
+            تأیید حذف
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+interface FormModalProps {
+  title: string;
+  initialData: Omit<Profile, "id" | "createdAt"> | Profile;
+  onClose: () => void;
+  onSave: (data: Omit<Profile, "id" | "createdAt"> | Profile) => Promise<void>;
+}
+
+const FormModal: React.FC<FormModalProps> = ({ title, initialData, onClose, onSave }) => {
+  const [formData, setFormData] = useState<Omit<Profile, "id" | "createdAt"> | Profile>(initialData);
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setFormData((prev) => ({
       ...prev,
-      [name]: updatedValue,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSaving(true);
+    try {
+      await onSave(formData);
+      onClose();
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Prevent background scroll when modal is open
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
-
-
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all animate-in fade-in duration-200"
-      onClick={onClose}
-    >
-      <div 
-        className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 max-h-[90vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-      >
-        <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex justify-between items-center sticky top-0">
-          <h3 className="font-bold text-lg text-indigo-900 flex items-center gap-2">
-            <Pencil size={20} />
-            ویرایش منبع: {resource.bookName}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-emerald-50 px-6 py-4 border-b border-indigo-100 flex justify-between items-center">
+          <h3 className="font-bold text-lg text-emerald-800 flex items-center gap-2">
+            <Library className="text-emerald-800" size={20} />
+            {title}
           </h3>
-          <button 
-            onClick={onClose}
-            className="text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-full p-2 transition-colors active:scale-95"
-          >
+          <button onClick={onClose} className="text-emerald-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-full p-2 transition-colors active:scale-95">
             <X size={20} />
           </button>
         </div>
-        
-        <form onSubmit={handleSubmit} className="overflow-y-auto p-6 flex-grow">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
-            {/* Loop through all fields for input generation */}
-            {(Object.keys(formData) as (keyof Resource)[]).filter(key => key !== 'id').map((key) => {
-              if (key === 'isAvailable') {
-                return (
-                  <div key={key} className="col-span-1 sm:col-span-2 flex items-center space-x-3 space-x-reverse mt-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <input
-                      id="isAvailable"
-                      name="isAvailable"
-                      type="checkbox"
-                      checked={formData.isAvailable}
-                      onChange={handleChange}
-                      className="h-5 w-5 rounded text-indigo-600 border-gray-300 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700 select-none">
-                      منبع در حال حاضر **موجود** است (وضعیت امانت)
-                    </label>
-                  </div>
-                );
-              }
-              
-              const label = fieldLabels[key as keyof typeof fieldLabels];
-              const isTextArea = key === 'contents';
-
-              return (
-                <div key={key} className={key === 'contents' ? 'sm:col-span-2' : 'sm:col-span-1'}>
-                  <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
-                    {label}
-                  </label>
-                  {isTextArea ? (
-                    <textarea
-                      id={key}
-                      name={key}
-                      rows={3}
-                      value={formData[key] as string}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    />
-                  ) : (
-                    <input
-                      id={key}
-                      name={key}
-                      type="text"
-                      value={formData[key] as string}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    />
-                  )}
-                </div>
-              );
-            })}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">نام پروفایل</label>
+            <input id="name" name="name" type="text" value={formData.name} onChange={handleChange} required className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+          </div>
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+            <textarea id="description" name="description" rows={3} value={formData.description} onChange={handleChange} className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <input id="active" name="active" type="checkbox" checked={formData.active} onChange={handleChange} className="h-5 w-5 rounded text-indigo-600 border-gray-300 focus:ring-indigo-500" />
+            <label htmlFor="active" className="text-sm font-medium text-gray-700 select-none flex items-center gap-1">
+              <CircleCheck size={16} className="text-emerald-500 inline-block" />
+              فعال بودن پروفایل
+            </label>
+          </div>
+          <div className="bg-gray-50 -mx-6 -mb-6 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <button type="button" onClick={onClose} className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition-all active:scale-95" disabled={saving}>
+              انصراف
+            </button>
+            <button type="submit" onClick={() => handleSubmit()} className="px-6 py-2.5 text-sm font-medium text-white bg-emerald-700 rounded-xl shadow-md shadow-indigo-200 hover:bg-emerald-900 transition-all active:scale-95 flex items-center gap-2" disabled={saving}>
+              {saving ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+              {saving ? "در حال ذخیره..." : "ذخیره پروفایل"}
+            </button>
           </div>
         </form>
-
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0">
-          <button 
-            type="button" 
-            onClick={onClose}
-            className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition-all active:scale-95"
-          >
-            انصراف
-          </button>
-          <button 
-            type="submit" 
-            onClick={handleSubmit}
-            className="px-6 py-3 text-sm font-medium text-white bg-indigo-600 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-1"
-          >
-            <Pencil size={18} />
-            ذخیره تغییرات
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-// ----------------------------------------------------------------------------------
-// Main Component
-// ----------------------------------------------------------------------------------
-export default function ResourceManagement() {
-  const [resources, setResources] = useState<Resource[]>(initialData);
+const TableSkeleton: React.FC = () => (
+  <div className="divide-y divide-gray-100 animate-pulse">
+    {[...Array(4)].map((_, index) => (
+      <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 px-4 gap-2 sm:gap-0">
+        <div className="h-4 bg-gray-200 rounded w-full sm:w-1/5" />
+        <div className="h-4 bg-gray-200 rounded w-full sm:w-2/5" />
+        <div className="h-4 bg-gray-200 rounded w-16 sm:w-1/6" />
+        <div className="h-4 bg-gray-200 rounded w-12 sm:w-1/12" />
+      </div>
+    ))}
+  </div>
+);
+
+// ================== 4. MAIN COMPONENT (Fully Responsive) ==================
+export default function ResourceProfile() {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // State for content viewing modal
-  const [selectedContent, setSelectedContent] = useState<{title: string, value: string} | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const pageSize = 5;
 
-  // State for editing modal
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingResource, setEditingResource] = useState<Resource | null>(null);
-
-  // State for mobile view detection (md breakpoint is 768px in Tailwind)
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  // Effect to check screen size and set isMobileView
-  useEffect(() => {
-    const checkMobile = () => {
-        // We consider anything below the 'md' breakpoint (768px) as mobile view for card layout
-        setIsMobileView(window.innerWidth < 768);
-    };
-
-    checkMobile(); // Check on mount
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
+  const fetchProfiles = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getAllResourceProfiles();
+      setProfiles(response);
+    } catch (error) {
+      console.error("Failed to fetch profiles:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchProfiles();
+  }, [fetchProfiles]);
 
-  // Filtered resources based on search term
-  const filteredResources = resources.filter(resource =>
-    resource.bookName.includes(searchTerm) ||
-    resource.authorName.includes(searchTerm) ||
-    resource.rowNumber.includes(searchTerm)
-  );
+  const filteredProfiles = profiles.filter((profile) => {
+    const q = searchTerm.toLowerCase();
+    return profile.name.toLowerCase().includes(q) || profile.description.toLowerCase().includes(q);
+  });
 
-  // --- Handlers ---
-  
-  // Handle content cell click (for long text)
-  const handleCellClick = (title: string, value: string) => {
-    setSelectedContent({ title, value });
-  };
-  
-  // Handle delete (simple confirmation)
-  const handleDelete = (id: number) => {
-    // IMPORTANT: Custom modal UI should be used instead of window.confirm in production
-    if (window.confirm("آیا از حذف این منبع مطمئن هستید؟")) {
-      setResources(resources.filter(r => r.id !== id));
+  const totalPages = Math.max(1, Math.ceil(filteredProfiles.length / pageSize));
+  const paginatedProfiles = filteredProfiles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handleCreate = useCallback(async (data: Omit<Profile, "id" | "createdAt"> | Profile) => {
+    await apiService.createResourceProfile(data as Omit<Profile, "id" | "createdAt">);
+    fetchProfiles();
+    setCurrentPage(1);
+  }, [fetchProfiles]);
+
+  const handleEdit = useCallback(async (data: Omit<Profile, "id" | "createdAt"> | Profile) => {
+    await apiService.updateResourceProfile(data as Profile);
+    fetchProfiles();
+  }, [fetchProfiles]);
+
+  const handleDeleteConfirmed = useCallback(async () => {
+    if (confirmDeleteId !== null) {
+      await apiService.deleteResourceProfile(confirmDeleteId);
+      setConfirmDeleteId(null);
+      fetchProfiles();
+      setCurrentPage(1);
     }
+  }, [confirmDeleteId, fetchProfiles]);
+
+  const handleCloseModal = (refresh = true) => {
+    setShowCreateModal(false);
+    setEditingProfile(null);
+    setExpandedId(null);
+    if (refresh) fetchProfiles();
   };
-
-  // Handle edit button click
-  const handleEdit = (resource: Resource) => {
-    setEditingResource(resource);
-    setIsEditing(true);
-  };
-
-  // Handle saving the edited resource
-  const handleSaveEdit = useCallback((updatedResource: Resource) => {
-    setResources(resources.map(r => 
-      r.id === updatedResource.id ? updatedResource : r
-    ));
-    setIsEditing(false);
-    setEditingResource(null);
-  }, [resources]);
-
-
-  // Columns mapping for Card View in mobile (also used for table headers)
-  const columnTitles: Record<keyof Omit<Resource, 'id' | 'isAvailable'>, string> = {
-    rowNumber: "شماره",
-    bookName: "نام کتاب",
-    authorName: "نویسنده",
-    publisher: "ناشر",
-    deathYear: "وفات",
-    subject: "موضوع",
-    libraryDate: "تاریخ",
-    language: "زبان",
-    contents: "محتویات",
-  };
-  
-  // Helper function to render status badge
-  const renderStatusBadge = (isAvailable: boolean) => {
-      return isAvailable ? (
-          <div className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-xl w-fit border border-green-100">
-              <CheckCircle2 size={14} />
-              <span className="text-[10px] font-medium whitespace-nowrap">موجود</span>
-          </div>
-      ) : (
-          <div className="flex items-center gap-1 text-red-500 bg-red-50 px-2 py-1 rounded-xl w-fit border border-red-100">
-              <XCircle size={14} />
-              <span className="text-[10px] font-medium whitespace-nowrap">امانت</span>
-          </div>
-      );
-  };
-
-  // Helper function to render action buttons
-  const renderActions = (item: Resource) => (
-      <div className="flex items-center justify-start md:justify-center gap-2">
-          <button 
-              onClick={() => handleEdit(item)}
-              className="p-1.5 text-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100 active:scale-95" 
-              title="ویرایش"
-          >
-              <Pencil size={16} />
-          </button>
-          <button 
-              onClick={() => handleDelete(item.id)}
-              className="p-1.5 text-red-500 bg-red-50 rounded-lg hover:bg-red-100 transition-colors border border-red-100 active:scale-95" 
-              title="حذف"
-          >
-              <Trash2 size={16} />
-          </button>
-      </div>
-  );
-
-
-  // ----------------------------------------------------------------------------------
-  // TABLE VIEW (For md and larger screens) - With fixed column widths for better layout
-  // ----------------------------------------------------------------------------------
-  const TableView = () => (
-      // min-w-[1200px] ensures the table always has enough space, triggering overflow-x-auto if needed
-      <table className="min-w-[1200px] w-full text-right border-collapse table-fixed">
-          <thead>
-              {/* حذف فضای خالی اطراف تگ tr برای رفع خطای Whitespace text nodes */}
-              <tr className="bg-gray-100/80 text-gray-600 text-xs font-bold uppercase tracking-wider">
-                  <th className="px-2 py-4 first:rounded-tr-2xl w-[5%]">شماره</th>
-                  <th className="px-2 py-4 w-[25%]">نام کتاب</th>
-                  <th className="px-2 py-4 w-[10%]">نویسنده</th>
-                  <th className="px-2 py-4 w-[10%]">ناشر</th>
-                  <th className="px-2 py-4 w-[7%]">وفات</th>
-                  <th className="px-2 py-4 w-[8%]">موضوع</th>
-                  <th className="px-2 py-4 w-[8%]">تاریخ</th>
-                  <th className="px-2 py-4 w-[5%]">زبان</th>
-                  <th className="px-2 py-4 w-[15%]">محتویات</th>
-                  <th className="px-2 py-4 w-[3%]">وضعیت</th>
-                  <th className="px-4 py-4 text-center last:rounded-tl-2xl w-[4%]">عملیات</th>
-              </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-              {filteredResources.length > 0 ? (
-                  // استفاده از پرانتز برای map برای اطمینان از اینکه بلافاصله JSX برگردانده می‌شود
-                  filteredResources.map((item) => (
-                      <tr key={item.id} className="group hover:bg-indigo-50/30 transition-colors duration-200">
-                          {/* 1. شماره ردیف - فشرده‌سازی برای حذف Whitespace text nodes */}
-                          <td className="px-2 py-5 text-gray-500 font-mono text-sm truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("شماره ردیف", item.rowNumber)}><div className="py-1">{item.rowNumber}</div></td>
-                          {/* 2. نام کتاب */}
-                          <td className="px-2 py-5 font-bold text-gray-800 truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("نام کتاب", item.bookName)}><div className="py-1">{item.bookName}</div></td>
-                          {/* 3. نویسنده */}
-                          <td className="px-2 py-5 text-gray-600 truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("نام نویسنده", item.authorName)}><div className="py-1">{item.authorName}</div></td>
-                          {/* 4. ناشر */}
-                          <td className="px-2 py-5 text-gray-600 truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("ناشر", item.publisher)}><span className="bg-gray-100 px-2 py-1 rounded-lg text-xs border border-gray-200 truncate inline-block w-fit">{item.publisher}</span></td>
-                          {/* 5. وفات */}
-                          <td className="px-2 py-5 text-gray-500 text-sm truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("سال وفات", item.deathYear)}><div className="py-1">{item.deathYear}</div></td>
-                          {/* 6. موضوع */}
-                          <td className="px-2 py-5 text-gray-600 truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("موضوع", item.subject)}><div className="py-1">{item.subject}</div></td>
-                          {/* 7. تاریخ */}
-                          <td className="px-2 py-5 text-gray-500 text-sm truncate cursor-pointer hover:text-indigo-600 align-top" dir="ltr" onClick={() => handleCellClick("تاریخ ثبت در کتابخانه", item.libraryDate)}><div className="py-1">{item.libraryDate}</div></td>
-                          {/* 8. زبان */}
-                          <td className="px-2 py-5 text-gray-600 truncate cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("زبان", item.language)}><div className="py-1">{item.language}</div></td>
-                          {/* 9. محتویات */}
-                          <td className="px-2 py-5 text-gray-500 text-sm truncate max-w-[150px] cursor-pointer hover:text-indigo-600 align-top" onClick={() => handleCellClick("محتویات", item.contents)}><div className="py-1">{item.contents}</div></td>
-                          {/* 10. وضعیت */}
-                          <td className="px-2 py-5 align-top"><div className="py-1">{renderStatusBadge(item.isAvailable)}</div></td>
-                          {/* 11. عملیات */}
-                          <td className="px-4 py-5 text-center align-top"><div className="py-1">{renderActions(item)}</div></td>
-                      </tr>
-                  ))
-              ) : (
-                  // سطر "موردی یافت نشد"
-                  <tr>
-                      <td colSpan={11} className="px-6 py-12 text-center text-gray-400">
-                          <Search size={40} className="text-gray-300 mb-2 mx-auto" />
-                          <span>موردی یافت نشد</span>
-                      </td>
-                  </tr>
-              )}
-          </tbody>
-      </table>
-  );
-
-  // ----------------------------------------------------------------------------------
-  // CARD VIEW (For xs/sm screens) - Fully stacked and flowing
-  // ----------------------------------------------------------------------------------
-  const CardView = () => (
-    <div className="space-y-4">
-        {filteredResources.length > 0 ? (
-            filteredResources.map((item) => (
-                <div key={item.id} className="bg-white p-5 rounded-2xl shadow-md border border-gray-100 space-y-3">
-                    
-                    {/* Header: Title and Row Number */}
-                    <div className="flex justify-between items-start border-b border-gray-100 pb-3">
-                        <h2 className="text-base font-bold text-indigo-700 max-w-[80%] overflow-hidden overflow-ellipsis whitespace-nowrap" onClick={() => handleCellClick("نام کتاب", item.bookName)}>
-                            {item.bookName}
-                        </h2>
-                        <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full whitespace-nowrap mr-2 font-mono">
-                            {item.rowNumber}
-                        </span>
-                    </div>
-
-                    {/* Details Grid */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                        {/* Author */}
-                        <div className="col-span-2 sm:col-span-1">
-                            <span className="text-gray-400 block mb-0.5">{columnTitles.authorName}</span>
-                            <span className="text-gray-700 font-medium" onClick={() => handleCellClick("نام نویسنده", item.authorName)}>{item.authorName}</span>
-                        </div>
-                        {/* Publisher */}
-                        <div className="col-span-2 sm:col-span-1">
-                            <span className="text-gray-400 block mb-0.5">{columnTitles.publisher}</span>
-                            <span className="text-gray-700 font-medium">{item.publisher}</span>
-                        </div>
-                        {/* Subject */}
-                        <div className="col-span-1">
-                            <span className="text-gray-400 block mb-0.5">{columnTitles.subject}</span>
-                            <span className="text-gray-700 text-xs bg-indigo-50 px-2 py-0.5 rounded-lg w-fit block">{item.subject}</span>
-                        </div>
-                        {/* Date */}
-                        <div className="col-span-1">
-                            <span className="text-gray-400 block mb-0.5">{columnTitles.libraryDate}</span>
-                            <span className="text-gray-700 font-mono text-xs" dir="ltr">{item.libraryDate}</span>
-                        </div>
-                    </div>
-
-                    {/* Status & Actions Footer */}
-                    <div className="flex justify-between items-center border-t border-gray-100 pt-3 mt-3">
-                        <div>
-                            <span className="text-gray-500 text-xs block mb-1">وضعیت:</span>
-                            {renderStatusBadge(item.isAvailable)}
-                        </div>
-                        {renderActions(item)}
-                    </div>
-
-                    {/* Contents (Clickable) */}
-                    <div className="pt-3 border-t border-gray-100" onClick={() => handleCellClick("محتویات جانبی", item.contents)}>
-                        <span className="text-gray-400 text-xs block mb-1">{columnTitles.contents}</span>
-                        <p className="text-gray-600 text-sm italic overflow-hidden overflow-ellipsis max-w-full">
-                            {item.contents}
-                        </p>
-                    </div>
-
-                </div>
-            ))
-        ) : (
-            <div className="px-6 py-12 text-center text-gray-400 flex flex-col items-center justify-center gap-2 bg-white rounded-2xl shadow-md border border-gray-100">
-                <Search size={40} className="text-gray-300 mb-2" />
-                <span>موردی یافت نشد</span>
-            </div>
-        )}
-    </div>
-  );
-  // ----------------------------------------------------------------------------------
-
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans" dir="rtl">
-      {/* استایل فونت فارسی */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
-        body { font-family: 'Vazirmatn', sans-serif; }
-      `}</style>
-
-      {/* --- Modals --- */}
-      
-      {/* 1. Content Viewer Modal */}
-      {selectedContent && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-all animate-in fade-in duration-200"
-          onClick={() => setSelectedContent(null)}
-        >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100"
-            onClick={(e) => e.stopPropagation()} 
-          >
-            <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100 flex justify-between items-center">
-              <h3 className="font-bold text-indigo-900">{selectedContent.title}</h3>
-              <button 
-                onClick={() => setSelectedContent(null)}
-                className="text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-full p-2 transition-colors active:scale-95"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-justify">
-                {selectedContent.value}
-              </p>
-            </div>
-            <div className="bg-gray-50 px-6 py-3 text-left">
-              <button 
-                onClick={() => setSelectedContent(null)}
-                className="text-sm text-gray-500 hover:text-gray-800 font-medium"
-              >
-                بستن
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 2. Edit Resource Modal */}
-      {isEditing && editingResource && (
-        <EditResourceModal 
-          resource={editingResource} 
-          onClose={() => setIsEditing(false)} 
-          onSave={handleSaveEdit}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 p-4 sm:p-6 lg:p-8" dir="rtl">
+     
+      {/* Modals */}
+      {confirmDeleteId !== null && (
+        <ConfirmationModal
+          title="تأیید حذف پروفایل"
+          message="آیا مطمئن هستید که می‌خواهید این پروفایل را حذف کنید؟ این عمل غیرقابل بازگشت است."
+          onConfirm={handleDeleteConfirmed}
+          onCancel={() => setConfirmDeleteId(null)}
         />
       )}
+      {showCreateModal && (
+        <FormModal title="ایجاد پروفایل منابع جدید" initialData={{ name: "", description: "", active: true }} onClose={() => handleCloseModal()} onSave={handleCreate} />
+      )}
+      {editingProfile && (
+        <FormModal title={`ویرایش پروفایل: ${editingProfile.name}`} initialData={editingProfile} onClose={() => handleCloseModal()} onSave={handleEdit} />
+      )}
 
-      {/* --- Main Layout --- */}
-      <div className="w-full max-w-[1400px] mx-auto bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-        
-        {/* ==================== بخش بالایی (Header) ==================== */}
-        <div className="bg-white p-6 md:p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-          
-          <div className="flex items-center gap-4 w-full md:w-auto justify-center md:justify-start">
-            <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600 shadow-sm">
-              <LibraryBig size={32} strokeWidth={2} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">مدیریت منابع</h1>
-              <p className="text-sm text-gray-400 mt-1">لیست تمامی کتاب‌ها و منابع موجود</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            
-            {/* نوار جست‌وجو */}
-            <div className="relative group w-full sm:w-60 md:w-80"> 
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
-                <Search size={20} />
+      <div className="w-full max-w-7xl mx-auto space-y-6">
+        {/* Header - Fully Responsive */}
+        <div className="p-4 sm:p-6 bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-slate-100/50">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-emerald-100 p-3 rounded-2xl text-[#278760] shadow-lg">
+                <Library size={26} />
               </div>
-              <input
-                type="text"
-                placeholder="جستجو در منابع..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-gray-50 text-gray-700 border border-gray-200 rounded-2xl py-3 pr-12 pl-4 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all shadow-sm text-sm"
-              />
+              <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#151515] leading-tight">مدیریت منابع</h1>
+               
+              </div>
             </div>
-
-            {/* دکمه افزودن */}
-            <button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-200 active:scale-95 text-sm">
-              <Plus size={20} />
-              <span className="font-medium whitespace-nowrap">افزودن منبع جدید</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#000000] pointer-events-none" size={18} />
+                <input
+                  type="text"
+                  placeholder="جستجو..."
+                  className="w-full rounded-2xl border border-gray-200 shadow-sm pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-emerald-900 focus:border-b-emerald-400 transition-all bg-white/50 backdrop-blur-sm placeholder:text-gray-400"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+              </div>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#278760] to-emerald-900 text-white hover:from-emerald-700 hover:to-green-700 transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2 text-sm font-semibold whitespace-nowrap min-h-[44px]"
+              >
+                <Plus size={20} />
+               افزودن منبع جدید
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* ==================== بخش اصلی (Body/Table/Card) ==================== */}
-        <div className="p-4 md:p-8 bg-gray-50/50 flex-grow">
-          
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col">
-            
-            {/* هدر بالای جدول/کارت‌ها */}
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Filter size={16} />
-                <span>نمایش {filteredResources.length} مورد</span>
-              </div>
-              <div className="hidden sm:flex gap-2">
-                <span className="w-3 h-3 rounded-full bg-red-400"></span>
-                <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
-                <span className="w-3 h-3 rounded-full bg-green-400"></span>
-              </div>
+        {/* Table Container - Fully Responsive */}
+        <div className="bg-white/70 backdrop-blur rounded-3xl shadow-2xl border border-slate-100/50 overflow-hidden">
+          {loading ? (
+            <div className="p-6 sm:p-8">
+              <TableSkeleton />
+              <p className="text-center text-gray-500 mt-8 flex items-center justify-center gap-2 text-sm sm:text-base">
+                <Loader2 size={20} className="animate-spin" />
+                در حال بارگذاری پروفایل‌ها...
+              </p>
             </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <tr className="border-b border-gray-200">
+                      <th className="py-4 px-4 sm:px-6 font-bold text-gray-700 text-xs sm:text-sm tracking-wide">نام پروفایل</th>
+                      <th className="hidden md:table-cell py-4 px-6 w-96 font-bold text-gray-700 text-xs sm:text-sm tracking-wide">توضیحات</th>
+                      <th className="hidden lg:table-cell py-4 px-6 font-bold text-gray-700 text-xs sm:text-sm tracking-wide">تاریخ ایجاد</th>
+                      <th className="hidden xl:table-cell py-4 px-6 text-center font-bold text-gray-700 text-xs sm:text-sm tracking-wide">وضعیت</th>
+                      <th className="py-4 px-4 sm:px-6 text-center font-bold text-gray-700 text-xs sm:text-sm tracking-wide">عملیات</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {paginatedProfiles.length > 0 ? (
+                      paginatedProfiles.map((p) => (
+                        <tr key={p.id} className="hover:bg-gray-50/50 transition-all group">
+                          {/* Mobile: Name + Short Description Card Style */}
+                          <td className="py-4 px-4 sm:px-6 border-b md:border-b-0 md:border-r">
+                            <div className="md:hidden space-y-2">
+                              <div className="font-semibold text-gray-800 text-sm">{p.name}</div>
+                              <div
+                                className="text-gray-600 text-xs cursor-pointer leading-relaxed"
+                                onClick={() => setExpandedId((prev) => prev === p.id ? null : p.id)}
+                              >
+                                {expandedId === p.id ? (
+                                  <span>{p.description}</span>
+                                ) : (
+                                  <span className="truncate block max-h-12 overflow-hidden">
+                                    {p.description?.slice(0, 80) || "---"}
+                                    {p.description && p.description.length > 80 && "..."}
+                                  </span>
+                                )}
+                                {p.description && p.description.length > 80 && (
+                                  <span className="text-emerald-900 text-xs block mt-1">
+                                    {expandedId === p.id ? "کمتر نمایش بده" : "نمایش کامل"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="hidden md:block font-semibold text-gray-800">{p.name}</div>
+                          </td>
 
-            <div className="w-full p-4 md:p-0">
-              {/* Conditional Rendering: Table vs Card View */}
-              {isMobileView ? (
-                  <div className="md:hidden">
-                      <CardView />
+                          {/* Desktop Description */}
+                          <td className="hidden md:table-cell py-4 px-6 max-w-md">
+                            <div
+                              className="text-gray-600 cursor-pointer leading-relaxed max-w-md"
+                              onClick={() => setExpandedId((prev) => prev === p.id ? null : p.id)}
+                            >
+                              {expandedId === p.id ? (
+                                <span>{p.description}</span>
+                              ) : (
+                                <span className="block truncate">{p.description || "---"}</span>
+                              )}
+                              {p.description && p.description.length > 60 && (
+                                <span className="block mt-1 text-emerald-900 text-xs">
+                                  {expandedId === p.id ? "کمتر" : "نمایش کامل"}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Date */}
+                          <td className="hidden lg:table-cell py-4 px-6 text-gray-500 text-xs font-mono" dir="ltr">
+                            {p.createdAt}
+                          </td>
+
+                          {/* Status */}
+                          <td className="hidden xl:table-cell py-4 px-6 text-center">
+                            <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${
+                              p.active
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : "bg-rose-50 text-rose-700 border border-rose-200"
+                            }`}>
+                              {p.active ? <CircleCheck size={14} /> : <CircleOff size={14} />}
+                              {p.active ? "فعال" : "غیرفعال"}
+                            </span>
+                          </td>
+
+                          {/* Actions - Always visible */}
+                          <td className="py-4 px-4 sm:px-6 text-center border-t md:border-t-0">
+                            <div className="flex justify-center items-center gap-2">
+                              <TooltipButton icon="edit" label="ویرایش" onClick={() => setEditingProfile(p)} />
+                              <TooltipButton icon="delete" label="حذف" onClick={() => setConfirmDeleteId(p.id)} />
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="py-16 text-center text-gray-400">
+                          <div className="flex flex-col items-center gap-4">
+                            <Library size={48} className="text-gray-300" />
+                            {searchTerm ? (
+                              <>
+                                <div className="text-lg font-medium text-gray-500">نتیجه‌ای یافت نشد</div>
+                                <span className="text-sm text-gray-400 text-center max-w-md">
+                                  عبارت جستجو را تغییر دهید یا ساده‌تر امتحان کنید.
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <div className="text-lg font-medium text-gray-500">هیچ پروفایلی وجود ندارد</div>
+                                <button
+                                  onClick={() => setShowCreateModal(true)}
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-md"
+                                >
+                                  <Plus size={16} />
+                                  ایجاد اولین پروفایل
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination - Fully Responsive */}
+              {totalPages > 1 && (
+                <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                  <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 xs:gap-0">
+                    <span className="text-sm text-gray-600 order-2 xs:order-1">
+                      نمایش <strong>{((currentPage - 1) * pageSize) + 1}</strong>–<strong>{Math.min(currentPage * pageSize, filteredProfiles.length)}</strong> 
+                      از <strong>{filteredProfiles.length}</strong> پروفایل
+                    </span>
+                    <div className="flex items-center gap-2 order-1 xs:order-2 justify-center xs:justify-end">
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
+                      >
+                        قبلی
+                      </button>
+                      <span className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-200 rounded-xl">
+                        صفحه {currentPage} از {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
+                      >
+                        بعدی
+                      </button>
+                    </div>
                   </div>
-              ) : (
-                  <div className="hidden md:block overflow-x-auto"> {/* اعمال overflow-x-auto برای جلوگیری از به‌هم ریختگی در عرض‌های میانی */}
-                      <TableView />
-                  </div>
+                </div>
               )}
-            </div>
-
-            {/* صفحه‌بندی (Pagination) پایین جدول */}
-            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <span className="text-sm text-gray-500">
-                نمایش ۱ تا {filteredResources.length} مورد از {resources.length} ورودی
-              </span>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50">قبلی</button>
-                <button className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700">۱</button>
-                <button className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">۲</button>
-                <button className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">۳</button>
-                <button className="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">بعدی</button>
-              </div>
-            </div>
-
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
