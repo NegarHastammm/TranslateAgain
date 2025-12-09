@@ -102,10 +102,20 @@ const ChatYar: React.FC = () => {
   };
 
   // همیشه اسکرول به آخر پیام‌ها برود
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [msgs.length]);
+// جدید
+useEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
+
+  // آیا کاربر تقریبا پایین لیست است؟
+  const isNearBottom =
+    el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+
+  if (isNearBottom) {
+    el.scrollTo({ top: el.scrollHeight, behavior: "auto" });
+  }
+}, [msgs.length]);
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -218,10 +228,12 @@ const ChatYar: React.FC = () => {
         </div>
 
         {/* پیام‌ها */}
-        <div
-          ref={scrollRef}
-          className="relative w-full overflow-y-auto p-4 md:p-6 z-20 pb-56 max-h-[calc(83vh-80px)]"
-        >
+     <div
+  ref={scrollRef}
+  className="relative w-full overflow-y-auto p-4 md:p-6 z-20 pb-56 max-h-[calc(83vh-80px)]"
+  style={{ scrollbarGutter: "stable" }}
+>
+
           <div className="max-w-4xl mx-auto">
             {msgs.map((m) => (
               <MessageBubble key={m.id} role={m.role} msg={m.msg} />
