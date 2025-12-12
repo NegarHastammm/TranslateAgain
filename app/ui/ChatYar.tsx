@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   Search,
@@ -101,20 +101,24 @@ const ChatYar: React.FC = () => {
     setMsgs([]);
   };
 
-  // همیشه اسکرول به آخر پیام‌ها برود
-// جدید
-useEffect(() => {
-  const el = scrollRef.current;
-  if (!el) return;
+// START CHANGE: Replacing useEffect with useLayoutEffect for smooth scrolling
 
-  // آیا کاربر تقریبا پایین لیست است؟
-  const isNearBottom =
-    el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+// این هوک بلافاصله پس از تغییرات DOM و قبل از رندر شدن اجرا می‌شود
+// و جلوی پرش ناگهانی را می‌گیرد.
+useLayoutEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
 
-  if (isNearBottom) {
-    el.scrollTo({ top: el.scrollHeight, behavior: "auto" });
-  }
+  // آیا کاربر تقریبا پایین لیست است؟ (تا ۱۰۰ پیکسل بالای پایین)
+  const isNearBottom =
+    el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+
+  if (isNearBottom) {
+    // اسکرول فوری به پایین بدون انیمیشن
+    el.scrollTop = el.scrollHeight; 
+  }
 }, [msgs.length]);
+// END CHANGE: Replacing useEffect with useLayoutEffect for smooth scrolling
 
 
   useEffect(() => {
