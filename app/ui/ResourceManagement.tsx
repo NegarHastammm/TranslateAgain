@@ -13,20 +13,27 @@ import {
   CircleOff,
 } from "lucide-react";
 
+
 // ============= 1. TYPES =============
 interface Book {
   id: number;
   title: string;          // نام کتاب
   author: string;         // نام نویسنده
   publisher: string;      // ناشر
-  deathYear?: string;     // سال وفات
+ deathYear: string;    // سال وفات
   subject: string;        // موضوع
   libraryDate: string;    // تاریخ انتشار در کتابخانه
   language: string;       // زبان
-  contents: string;       // محتویات
+
+  // محتوا
+  textContents?: string;      // متن
+  pdfFileName?: string;       // نام فایل PDF
+  contentsType: "text" | "pdf" | "both"; // نوع محتوا
+
   active: boolean;
   createdAt: string;
 }
+
 
 // چند نمونه‌ی تستی
 const mockBooks: Book[] = [
@@ -39,7 +46,9 @@ const mockBooks: Book[] = [
     subject: "مدیریت",
     libraryDate: "1403/01/05",
     language: "فارسی",
-    contents: "فصل‌های آموزشی درباره برنامه‌ریزی، اولویت‌بندی و کنترل زمان.",
+    textContents: "فصل‌های آموزشی درباره برنامه‌ریزی، اولویت‌بندی و کنترل زمان.",
+    pdfFileName: "",
+    contentsType: "text",
     active: true,
     createdAt: "1403/01/05",
   },
@@ -52,7 +61,9 @@ const mockBooks: Book[] = [
     subject: "فناوری اطلاعات",
     libraryDate: "1403/02/10",
     language: "فارسی",
-    contents: "مبانی OOP، طراحی نرم‌افزار و الگوهای رایج.",
+    textContents: "مبانی OOP، طراحی نرم‌افزار و الگوهای رایج.",
+    pdfFileName: "",
+    contentsType: "text",
     active: true,
     createdAt: "1403/02/10",
   },
@@ -65,7 +76,9 @@ const mockBooks: Book[] = [
     subject: "علم داده",
     libraryDate: "1403/02/20",
     language: "فارسی",
-    contents: "آشنایی با آمار، یادگیری ماشین و پردازش داده‌ها.",
+    textContents: "آشنایی با آمار، یادگیری ماشین و پردازش داده‌ها.",
+    pdfFileName: "",
+    contentsType: "pdf",
     active: true,
     createdAt: "1403/02/20",
   },
@@ -77,8 +90,10 @@ const mockBooks: Book[] = [
     deathYear: "",
     subject: "طراحی",
     libraryDate: "1403/03/01",
-    language: "فارسی",
-    contents: "اصول UX و UI برای وب و موبایل.",
+    language: "عربی",
+    textContents: "اصول UX و UI برای وب و موبایل.",
+    pdfFileName: "",
+    contentsType: "both",
     active: true,
     createdAt: "1403/03/01",
   },
@@ -90,8 +105,10 @@ const mockBooks: Book[] = [
     deathYear: "",
     subject: "مدیریت پروژه",
     libraryDate: "1403/03/10",
-    language: "فارسی",
-    contents: "اسکرام، کانبان و متدهای چابک در سازمان‌ها.",
+    language: "عربی",
+    textContents: "اسکرام، کانبان و متدهای چابک در سازمان‌ها.",
+    pdfFileName: "",
+    contentsType: "text",
     active: false,
     createdAt: "1403/03/10",
   },
@@ -104,7 +121,9 @@ const mockBooks: Book[] = [
     subject: "شبکه",
     libraryDate: "1403/03/20",
     language: "فارسی",
-    contents: "مفاهیم لایه‌ای، پروتکل‌ها و امنیت شبکه.",
+    textContents: "مفاهیم لایه‌ای، پروتکل‌ها و امنیت شبکه.",
+    pdfFileName: "",
+    contentsType: "pdf",
     active: true,
     createdAt: "1403/03/20",
   },
@@ -116,8 +135,10 @@ const mockBooks: Book[] = [
     deathYear: "",
     subject: "امنیت",
     libraryDate: "1403/04/01",
-    language: "فارسی",
-    contents: "تهدیدها، آسیب‌پذیری‌ها و راهکارهای امنیتی.",
+    language: "انگلیسی",
+    textContents: "تهدیدها، آسیب‌پذیری‌ها و راهکارهای امنیتی.",
+    pdfFileName: "",
+    contentsType: "pdf",
     active: true,
     createdAt: "1403/04/01",
   },
@@ -130,7 +151,9 @@ const mockBooks: Book[] = [
     subject: "تحلیل سیستم",
     libraryDate: "1403/04/10",
     language: "فارسی",
-    contents: "روش‌های مستندسازی و مدل‌سازی فرایندها.",
+    textContents: "روش‌های مستندسازی و مدل‌سازی فرایندها.",
+    pdfFileName: "",
+    contentsType: "text",
     active: true,
     createdAt: "1403/04/10",
   },
@@ -142,8 +165,10 @@ const mockBooks: Book[] = [
     deathYear: "",
     subject: "آمار",
     libraryDate: "1403/04/18",
-    language: "فارسی",
-    contents: "مبانی آمار توصیفی و استنباطی برای مهندسان.",
+    language: "انگلیسی",
+    textContents: "مبانی آمار توصیفی و استنباطی برای مهندسان.",
+    pdfFileName: "",
+    contentsType: "both",
     active: false,
     createdAt: "1403/04/18",
   },
@@ -155,25 +180,31 @@ const mockBooks: Book[] = [
     deathYear: "",
     subject: "هوش مصنوعی",
     libraryDate: "1403/04/25",
-    language: "فارسی",
-    contents: "جست‌وجو، منطق، یادگیری و کاربردهای هوش مصنوعی.",
+    language: "عربی",
+    textContents: "جست‌وجو، منطق، یادگیری و کاربردهای هوش مصنوعی.",
+    pdfFileName: "",
+    contentsType: "text",
     active: true,
     createdAt: "1403/04/25",
   },
 ];
 
 
+
 // ============= 2. MOCK API SERVICE =============
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 
 class MockApiService {
   private data: Book[] = [...mockBooks];
   private nextId = 11;
 
+
   async getAllBooks(): Promise<Book[]> {
     await delay(500);
     return [...this.data];
   }
+
 
   async createBook(bookData: Omit<Book, "id" | "createdAt">): Promise<Book> {
     await delay(500);
@@ -186,6 +217,7 @@ class MockApiService {
     return newBook;
   }
 
+
   async updateBook(updatedBook: Book): Promise<Book> {
     await delay(500);
     const index = this.data.findIndex((b) => b.id === updatedBook.id);
@@ -196,13 +228,16 @@ class MockApiService {
     throw new Error("Book not found");
   }
 
+
   async deleteBook(id: number): Promise<void> {
     await delay(500);
     this.data = this.data.filter((b) => b.id !== id);
   }
 }
 
+
 const apiService = new MockApiService();
+
 
 // ============= 3. SMALL COMPONENTS =============
 interface TooltipButtonProps {
@@ -210,6 +245,7 @@ interface TooltipButtonProps {
   label: string;
   onClick: () => void;
 }
+
 
 const TooltipButton: React.FC<TooltipButtonProps> = ({ icon, label, onClick }) => {
   const IconComponent = icon === "edit" ? FilePen : Trash2;
@@ -222,6 +258,7 @@ const TooltipButton: React.FC<TooltipButtonProps> = ({ icon, label, onClick }) =
   const finalClasses =
     icon === "edit" ? `${baseClasses} ${editClasses}` : `${baseClasses} ${deleteClasses}`;
 
+
   return (
     <button onClick={onClick} title={label} className={finalClasses}>
       <IconComponent size={16} />
@@ -229,12 +266,14 @@ const TooltipButton: React.FC<TooltipButtonProps> = ({ icon, label, onClick }) =
   );
 };
 
+
 interface ConfirmationModalProps {
   title: string;
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
+
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
@@ -273,6 +312,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   </div>
 );
 
+
 interface FormModalProps {
   title: string;
   initialData: Omit<Book, "id" | "createdAt"> | Book;
@@ -287,12 +327,17 @@ const FormModal: React.FC<FormModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Omit<Book, "id" | "createdAt"> | Book>(initialData);
   const [saving, setSaving] = useState(false);
-  const [selectedYear, setSelectedYear] = useState((initialData as Book).deathYear || "");
-  const [contentsType, setContentsType] = useState((initialData as Book).contentsType || "text");
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfName, setPdfName] = useState("");
+const [selectedYear, setSelectedYear] = useState((initialData as Book).deathYear || "");
 
-  const years = Array.from({ length: 100 }, (_, i) => 1325 + i);
+  const [contentsType, setContentsType] = useState<"text" | "pdf" | "both">(
+    (initialData as Book).contentsType || "text"
+  );
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfName, setPdfName] = useState((initialData as Book).pdfFileName || "");
+
+  // بازه سال وفات، مثلا ۱۳۰۰ تا ۱۴۲۰
+  const years = Array.from({ length: 1420 - 1300 + 1 }, (_, i) => 1300 + i);
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -304,17 +349,19 @@ const FormModal: React.FC<FormModalProps> = ({
     }));
   };
 
+
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type === "application/pdf" && file.size <= 10 * 1024 * 1024) {
       setPdfFile(file);
       setPdfName(file.name);
-      setFormData((prev) => ({ ...prev, contents: file.name }));
+      setFormData((prev) => ({ ...prev, pdfFileName: file.name }));
     } else {
       alert("فقط فایل PDF حداکثر 10 مگابایت مجاز است");
       e.target.value = "";
     }
   };
+
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -334,13 +381,9 @@ const FormModal: React.FC<FormModalProps> = ({
       const dataToSave = {
         ...formData,
         deathYear: selectedYear,
-        contentsType: contentsType as "text" | "pdf",
+        contentsType,
+        pdfFileName: pdfFile ? pdfFile.name : (formData as Book).pdfFileName || "",
       } as Book;
-      
-      // اگر PDF انتخاب شده، نام فایل را ذخیره کن
-      if (contentsType === "pdf" && pdfFile) {
-        dataToSave.contents = pdfFile.name;
-      }
       
       await onSave(dataToSave);
       onClose();
@@ -351,7 +394,8 @@ const FormModal: React.FC<FormModalProps> = ({
     }
   };
 
- return (
+
+  return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}
@@ -372,6 +416,7 @@ const FormModal: React.FC<FormModalProps> = ({
             <X size={20} />
           </button>
         </div>
+
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -401,31 +446,47 @@ const FormModal: React.FC<FormModalProps> = ({
                 className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-b-emerald-800 text-sm"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ناشر</label>
-              <input
-                name="publisher"
-                type="text"
-                value={formData.publisher}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-b-emerald-800 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">سال وفات</label>
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-b-emerald-800 text-sm"
-              >
-                <option value="">انتخاب کنید...</option>
-                {years.map((year) => (
-                  <option key={year} value={year.toString()}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+           <div className="grid grid-cols-2 gap-3">
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">سال وفات از</label>
+    <select
+      value={selectedYear.split(" - ")[0] || ""}
+      onChange={(e) => {
+        const from = e.target.value;
+        const to = selectedYear.split(" - ")[1] || "";
+        setSelectedYear(from ? `${from} - ${to}` : "");
+      }}
+      className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-b-emerald-800 text-sm"
+    >
+      <option value="">انتخاب کنید...</option>
+      {years.slice(0, 60).map((year) => (
+        <option key={`from-${year}`} value={year.toString()}>
+          {year}
+        </option>
+      ))}
+    </select>
+  </div>
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">سال وفات تا</label>
+    <select
+      value={selectedYear.split(" - ")[1] || ""}
+      onChange={(e) => {
+        const to = e.target.value;
+        const from = selectedYear.split(" - ")[0] || "";
+        setSelectedYear(from ? `${from} - ${to}` : "");
+      }}
+      className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-b-emerald-800 text-sm"
+    >
+      <option value="">انتخاب کنید...</option>
+      {years.slice(0, 60).map((year) => (
+        <option key={`to-${year}`} value={year.toString()}>
+          {year}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">موضوع</label>
               <input
@@ -470,29 +531,43 @@ const FormModal: React.FC<FormModalProps> = ({
               </label>
               <select
                 value={contentsType}
-                onChange={(e) => setContentsType(e.target.value as "text" | "pdf")}
+                onChange={(e) =>
+                  setContentsType(e.target.value as "text" | "pdf" | "both")
+                }
                 className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-emerald-800 text-sm"
               >
                 <option value="text">حتما دارای متن</option>
                 <option value="pdf">حتما دارای PDF</option>
+                <option value="both">متن و PDF</option>
               </select>
             </div>
           </div>
 
+          {/* محتویات */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {contentsType === "text" ? "محتویات (متن)" : "فایل PDF"}
+              محتویات
             </label>
-            {contentsType === "text" ? (
-              <textarea
-                name="contents"
-                rows={4}
-                value={formData.contents}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-emerald-800 text-sm resize-vertical"
-                placeholder="توضیحات محتویات کتاب را بنویسید..."
-              />
-            ) : (
+
+            {/* متن در حالت text یا both */}
+            {(contentsType === "text" || contentsType === "both") && (
+              <div className="mb-4">
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  متن
+                </label>
+                <textarea
+                  name="textContents"
+                  rows={4}
+                  value={(formData as Book).textContents || ""}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-gray-300 shadow-sm p-3 focus:ring-emerald-500 focus:border-emerald-800 text-sm resize-vertical"
+                  placeholder="توضیحات محتویات کتاب را بنویسید..."
+                />
+              </div>
+            )}
+
+            {/* PDF در حالت pdf یا both */}
+            {(contentsType === "pdf" || contentsType === "both") && (
               <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-b-emerald-900 transition-all bg-gray-50">
                 <div className="space-y-4">
                   <div className="w-16 h-16 mx-auto bg-indigo-100 rounded-2xl flex items-center justify-center">
@@ -506,15 +581,19 @@ const FormModal: React.FC<FormModalProps> = ({
                       className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer mx-auto max-w-md"
                     />
                   </div>
-                  {pdfFile ? (
+                  {pdfFile || pdfName ? (
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                      <p className="text-sm font-medium text-green-800 mb-1">✅ فایل انتخاب شد:</p>
+                      <p className="text-sm font-medium text-green-800 mb-1">
+                        ✅ فایل انتخاب شد:
+                      </p>
                       <p className="text-xs text-green-700 bg-white px-3 py-1 rounded-lg inline-block max-w-full truncate">
                         {pdfName}
                       </p>
-                      <p className="text-xs text-green-600 mt-1">
-                        {Math.round(pdfFile.size / 1024)} KB
-                      </p>
+                      {pdfFile && (
+                        <p className="text-xs text-green-600 mt-1">
+                          {Math.round(pdfFile.size / 1024)} KB
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <p className="text-sm text-gray-600">
@@ -525,6 +604,7 @@ const FormModal: React.FC<FormModalProps> = ({
               </div>
             )}
           </div>
+
 
           <div className="flex items-center gap-2 pt-2">
             <input
@@ -543,6 +623,7 @@ const FormModal: React.FC<FormModalProps> = ({
               فعال بودن کتاب
             </label>
           </div>
+
 
           <div className="bg-gray-50 -mx-6 -mb-6 px-6 py-4 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white/80 backdrop-blur-sm z-10">
             <button
@@ -568,6 +649,7 @@ const FormModal: React.FC<FormModalProps> = ({
   );
 };
 
+
 // ============= 4. MAIN COMPONENT =============
 export default function BooksTable() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -579,6 +661,7 @@ export default function BooksTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const pageSize = 5;
+
 
   const fetchBooks = useCallback(async () => {
     try {
@@ -592,9 +675,11 @@ export default function BooksTable() {
     }
   }, []);
 
+
   useEffect(() => {
     fetchBooks();
   }, [fetchBooks]);
+
 
   const filteredBooks = books.filter((book) => {
     const q = searchTerm.toLowerCase();
@@ -607,11 +692,13 @@ export default function BooksTable() {
     );
   });
 
+
   const totalPages = Math.max(1, Math.ceil(filteredBooks.length / pageSize));
   const paginatedBooks = filteredBooks.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
+
 
   const handleCreate = useCallback(
     async (data: Omit<Book, "id" | "createdAt"> | Book) => {
@@ -622,6 +709,7 @@ export default function BooksTable() {
     [fetchBooks]
   );
 
+
   const handleEdit = useCallback(
     async (data: Omit<Book, "id" | "createdAt"> | Book) => {
       await apiService.updateBook(data as Book);
@@ -629,6 +717,7 @@ export default function BooksTable() {
     },
     [fetchBooks]
   );
+
 
   const handleDeleteConfirmed = useCallback(async () => {
     if (confirmDeleteId !== null) {
@@ -639,12 +728,14 @@ export default function BooksTable() {
     }
   }, [confirmDeleteId, fetchBooks]);
 
+
   const handleCloseModal = (refresh = true) => {
     setShowCreateModal(false);
     setEditingBook(null);
     setExpandedId(null);
     if (refresh) fetchBooks();
   };
+
 
   return (
     <div
@@ -660,6 +751,7 @@ export default function BooksTable() {
         />
       )}
 
+
       {showCreateModal && (
         <FormModal
           title="افزودن کتاب جدید"
@@ -671,13 +763,16 @@ export default function BooksTable() {
             subject: "",
             libraryDate: "",
             language: "",
-            contents: "",
+            textContents: "",
+            pdfFileName: "",
+            contentsType: "text",
             active: true,
           }}
           onClose={() => handleCloseModal()}
           onSave={handleCreate}
         />
       )}
+
 
       {editingBook && (
         <FormModal
@@ -687,6 +782,7 @@ export default function BooksTable() {
           onSave={handleEdit}
         />
       )}
+
 
       <div className="w-full max-w-7xl mx-auto space-y-6">
         {/* Header */}
@@ -698,7 +794,7 @@ export default function BooksTable() {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#151515] leading-tight">
-                  مدیریت کتاب‌ها
+                  مدیریت منابع
                 </h1>
               </div>
             </div>
@@ -730,12 +826,16 @@ export default function BooksTable() {
           </div>
         </div>
 
+
         {/* Table */}
         <div className="bg-white/70 backdrop-blur rounded-3xl shadow-2xl border border-slate-100/50 overflow-hidden">
           <div className="overflow-x-auto lg:overflow-x-visible">
             <table className="w-full lg:table-fixed text-xs sm:text-sm">
               <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr className="border-b border-gray-200">
+                  <th className="py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
+                    ردیف
+                  </th>
                   <th className="py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
                     نام کتاب
                   </th>
@@ -751,14 +851,14 @@ export default function BooksTable() {
                   <th className="hidden md:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
                     موضوع
                   </th>
-                  <th className="hidden lg:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
-                    تاریخ در کتابخانه
+                 <th className="hidden lg:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700">
+                    تاریخ انتشار در کتابخانه
                   </th>
-                  <th className="hidden lg:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
+                  <th className="hidden lg:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700 text-center">
                     زبان
                   </th>
                   <th className="hidden lg:table-cell py-3 px-4 sm:px-6 font-bold text-gray-700 whitespace-nowrap">
-                    محتویات
+                    محتویات دارای
                   </th>
                   <th className="py-3 px-4 sm:px-6 text-center font-bold text-gray-700 whitespace-nowrap">
                     وضعیت
@@ -770,8 +870,11 @@ export default function BooksTable() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {paginatedBooks.length > 0 ? (
-                  paginatedBooks.map((b) => (
+                  paginatedBooks.map((b, index) => (
                     <tr key={b.id} className="hover:bg-gray-50/50 transition-all group">
+                      <td className="py-3 px-4 sm:px-6 text-gray-700 text-center">
+                        {(currentPage - 1) * pageSize + index + 1}
+                      </td>
                       <td className="py-3 px-4 sm:px-6 font-semibold text-gray-800">
                         {b.title}
                       </td>
@@ -791,25 +894,23 @@ export default function BooksTable() {
                       >
                         {b.libraryDate || "---"}
                       </td>
-                      <td className="hidden lg:table-cell py-3 px-4 sm:px-6 text-gray-600">
-                        {b.language || "---"}
-                      </td>
-                      <td className="hidden lg:table-cell py-3 px-4 sm:px-6 text-gray-600 max-w-xs">
-                        <span
-                          className="cursor-pointer"
-                          onClick={() =>
-                            setExpandedId((prev) => (prev === b.id ? null : b.id))
-                          }
-                        >
-                          {expandedId === b.id ? (
-                            b.contents
-                          ) : (
-                            <span className="block truncate">
-                              {b.contents || "---"}
-                            </span>
-                          )}
-                        </span>
-                      </td>
+<td className="hidden lg:table-cell py-3 px-4 sm:px-6 text-gray-600 text-center">
+  {b.language === "فارسی" && "فارسی"}
+  {b.language === "عربی" && "عربی"}
+  {b.language === "انگلیسی" && "انگلیسی"}
+  {!b.language && "---"}
+</td>
+
+                  
+                        {/* نمایش محتویات بر اساس نوع */}
+<td className="hidden lg:table-cell py-3 px-4 sm:px-6 text-gray-600 text-center">
+  {b.contentsType === "text" && "متن"}
+  {b.contentsType === "pdf" && "PDF"}
+  {b.contentsType === "both" && "متن و PDF"}
+  {!b.contentsType && "---"}
+</td>
+
+
                       <td className="py-3 px-4 sm:px-6 text-center">
                         <span
                           className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${
@@ -847,7 +948,7 @@ export default function BooksTable() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={10} className="py-16 text-center text-gray-400">
+                    <td colSpan={11} className="py-16 text-center text-gray-400">
                       <div className="flex flex-col items-center gap-4">
                         <Library size={48} className="text-gray-300" />
                         <div className="text-lg font-medium text-gray-500">
@@ -868,38 +969,40 @@ export default function BooksTable() {
             </table>
           </div>
 
+
           {/* Pagination */}
-        {totalPages > 1 && (
-  <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-    <div className="flex flex-col items-center gap-3">
-      <span className="text-sm text-gray-600 text-center">
-        نمایش{" "}
-        <strong>{(currentPage - 1) * pageSize + 1}</strong>–
-        <strong>{Math.min(currentPage * pageSize, filteredBooks.length)}</strong>{" "}
-        از <strong>{filteredBooks.length}</strong> کتاب
-      </span>
-      <div className="flex items-center gap-2 justify-center">
-        <button
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
-        >
-          قبلی
-        </button>
-        <span className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-200 rounded-xl">
-          صفحه {currentPage} از {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
-        >
-          بعدی
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          {totalPages > 1 && (
+            <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-sm text-gray-600 text-center">
+                  نمایش{" "}
+                  <strong>{(currentPage - 1) * pageSize + 1}</strong>–
+                  <strong>{Math.min(currentPage * pageSize, filteredBooks.length)}</strong>{" "}
+                  از <strong>{filteredBooks.length}</strong> کتاب
+                </span>
+                <div className="flex items-center gap-2 justify-center">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
+                  >
+                    قبلی
+                  </button>
+                  <span className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-200 rounded-xl">
+                    صفحه {currentPage} از {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all min-h-[44px] flex items-center justify-center"
+                  >
+                    بعدی
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
 
         </div>
       </div>
