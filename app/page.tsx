@@ -12,6 +12,7 @@ export default function Home() {
       <Link href="/chatSection">ChatYar</Link>
       <Link href="/RManagement">Resource Management</Link>
       <Link href="/Research">Research</Link>
+      <Link href="/OnlineReading">OnlineReading</Link>
     </div>
   );
 }
