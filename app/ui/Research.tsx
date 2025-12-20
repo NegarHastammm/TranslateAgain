@@ -25,6 +25,8 @@ const versions = ["ChatGPT 3.5", "ChatGPT 4", "ChatGPT 4 Turbo"];
 
 const SearchYar: React.FC = () => {
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [chats, setChats] = useState(initialChats);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -44,12 +46,32 @@ const SearchYar: React.FC = () => {
     setChats([newChat, ...chats]);
   };
 
+  // انیمیشن نرم کشویی
+  const toggleChatMenu = () => {
+    if (isChatMenuOpen) {
+      // بستن با انیمیشن
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIsChatMenuOpen(false);
+        setIsMenuVisible(false);
+        setIsAnimating(false);
+      }, 400);
+    } else {
+      // باز کردن با انیمیشن
+      setIsChatMenuOpen(true);
+      setIsMenuVisible(true);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 400);
+    }
+  };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsChatMenuOpen(false);
         setVersionMenuOpen(false);
         setOpenMenuId(null);
+        setIsMenuVisible(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -65,7 +87,7 @@ const SearchYar: React.FC = () => {
       <header className="flex items-center justify-between p-4 border-b border-gray-100 bg-white shrink-0 relative z-30 flex-row-reverse shadow-sm">
         <div className="relative flex items-center gap-3 h-14">
           <button
-            className="px-3 h-full font-bold hover:bg-gray-100 rounded text-gray-800"
+            className="px-3 h-full font-bold hover:bg-gray-100 rounded text-gray-800 transition-colors"
             onClick={() => setVersionMenuOpen((v) => !v)}
           >
             {version}
@@ -76,16 +98,16 @@ const SearchYar: React.FC = () => {
             alt="logo"
             width={56}
             height={56}
-            className="w-20 h-20 mt-10 absolute left-[91] top-[-30]"
+            className="w-20 h-20 mt-10 absolute left-[91px] top-[-30px]"
             priority
           />
 
           {versionMenuOpen && (
-            <div className="absolute top-full mt-1 right-0 w-44 bg-white border border-gray-100 rounded-lg shadow-md z-50">
+            <div className="absolute top-full mt-1 right-0 w-44 bg-white border border-gray-100 rounded-lg shadow-md z-50 transition-all duration-200 ease-out">
               {versions.map((v) => (
                 <button
                   key={v}
-                  className="w-full text-right px-3 py-2 hover:bg-gray-50 text-sm text-gray-700"
+                  className="w-full text-right px-3 py-2 hover:bg-gray-50 text-sm text-gray-700 transition-colors"
                   onClick={() => {
                     setVersion(v);
                     setVersionMenuOpen(false);
@@ -100,8 +122,8 @@ const SearchYar: React.FC = () => {
 
         <div className="flex items-center gap-3 h-14">
           <button
-            className="p-2 rounded hover:bg-gray-100 text-xl text-gray-700"
-            onClick={() => setIsChatMenuOpen((v) => !v)}
+            className="p-2 rounded hover:bg-gray-100 text-xl text-gray-700 transition-all duration-200"
+            onClick={toggleChatMenu}
           >
             ☰
           </button>
@@ -153,10 +175,7 @@ const SearchYar: React.FC = () => {
                 </div>
               )
             ) : (
-              <div className="text-center py-20">
-               
-              
-              </div>
+              <div className="text-center py-20" />
             )}
           </div>
         </div>
@@ -179,21 +198,27 @@ const SearchYar: React.FC = () => {
           </div>
         </div>
 
-        {/* سایدبار */}
+        {/* سایدبار منوی فهرست با انیمیشن کشویی نرم */}
         {isChatMenuOpen && (
           <>
+            {/* Overlay با fade نرم */}
             <div
-              className="absolute inset-0 bg-black/20 z-30"
-              onClick={() => {
-                setIsChatMenuOpen(false);
-                setOpenMenuId(null);
-              }}
+              className={`absolute inset-0 bg-black/20 z-30 transition-all duration-300 ease-in-out 
+                          ${isMenuVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+              onClick={toggleChatMenu}
             />
-
-            <aside className="absolute inset-y-0 right-0 w-80 bg-white shadow-2xl border-l border-gray-100 z-40 flex flex-col">
-              <div className="p-4 border-b border-gray-100 flex items-center justify-between h-16">
+            
+            {/* Sidebar کشویی نرم */}
+            <aside className={`absolute inset-y-0 right-0 w-80 h-full bg-white shadow-2xl border-l border-gray-100 z-40 flex flex-col overflow-hidden
+                              transition-all duration-400 ease-out
+                              ${isMenuVisible 
+                                ? 'translate-x-0 opacity-100 scale-100' 
+                                : 'translate-x-full opacity-0 scale-95 pointer-events-none'}`}>
+              
+              {/* Header aside */}
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between h-16 shrink-0">
                 <button
-                  className="flex items-center gap-2 text-[#1B2559] hover:text-emerald-600"
+                  className="flex items-center gap-2 text-[#1B2559] hover:text-emerald-600 transition-colors"
                   onClick={addNewChat}
                 >
                   <Plus size={18} />
@@ -204,11 +229,12 @@ const SearchYar: React.FC = () => {
                   alt="logo"
                   width={76}
                   height={76}
-                  className="absolute left-[12] top-[19]"
+                  className="absolute left-[12px] top-[19px]"
                 />
               </div>
 
-              <div className="p-4 border-b border-gray-100">
+              {/* Search input */}
+              <div className="p-4 border-b border-gray-100 shrink-0">
                 <div className="flex items-center border border-gray-200 rounded-xl p-3 bg-gray-50">
                   <Search className="w-5 h-5 text-gray-400 ml-2" />
                   <input
@@ -221,6 +247,7 @@ const SearchYar: React.FC = () => {
                 </div>
               </div>
 
+              {/* لیست چت ها */}
               <div className="flex-1 overflow-y-auto relative">
                 {filteredChats.map((chat, index) => {
                   const openUp = index > filteredChats.length - 3;
@@ -228,13 +255,13 @@ const SearchYar: React.FC = () => {
                   return (
                     <div
                       key={chat.id}
-                      className="text-[#1B2559] flex justify-between items-center p-3 border-b border-gray-100 hover:bg-gray-50 text-sm cursor-pointer"
+                      className="text-[#1B2559] flex justify-between items-center p-3 border-b border-gray-100 hover:bg-gray-50 text-sm cursor-pointer transition-colors group"
                     >
                       <span className="truncate">{chat.title}</span>
 
-                      <div className="relative">
+                      <div className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button
-                          className="p-1 rounded hover:bg-gray-100 text-gray-700"
+                          className="p-1 rounded hover:bg-gray-100 text-gray-700 transition-all"
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenMenuId(
@@ -249,17 +276,17 @@ const SearchYar: React.FC = () => {
                           <div
                             className={`
                               absolute bg-white border border-gray-100 rounded-lg shadow-md w-40 z-50
-                              left-0
+                              left-0 transition-all duration-200 ease-out
                               ${openUp ? "bottom-full mb-1" : "top-full mt-1"}
                             `}
                           >
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700 transition-colors">
                               <Pencil size={14} /> ویرایش عنوان
                             </button>
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-gray-700 transition-colors">
                               <Pin size={14} /> پین کردن
                             </button>
-                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-red-500">
+                            <button className="flex items-center gap-2 w-full text-right text-xs p-2 hover:bg-gray-50 text-red-500 transition-colors">
                               <Trash2 size={14} /> حذف
                             </button>
                           </div>

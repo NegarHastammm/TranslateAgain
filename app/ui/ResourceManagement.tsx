@@ -546,7 +546,7 @@ const [selectedYear, setSelectedYear] = useState((initialData as Book).deathYear
           {/* محتویات */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              محتویات
+              بارگزاری متن و PDF
             </label>
 
             {/* متن در حالت text یا both */}
@@ -571,7 +571,7 @@ const [selectedYear, setSelectedYear] = useState((initialData as Book).deathYear
               <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-b-emerald-900 transition-all bg-gray-50">
                 <div className="space-y-4">
                   <div className="w-16 h-16 mx-auto bg-indigo-100 rounded-2xl flex items-center justify-center">
-                    <span className="text-indigo-600 font-semibold text-sm">PDF</span>
+                    <span className="text-emerald-900 font-semibold text-sm">PDF</span>
                   </div>
                   <div>
                     <input
