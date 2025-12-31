@@ -1,6 +1,7 @@
 
 
 
+
 "use client";
 import React from "react";
 import "../globals.css";
@@ -14,12 +15,12 @@ import Image from "next/image";
 const HomeIcon = () => <HomeIconLucide className="w-5 h-5 text-gray-500" />;
 const SettingsIcon = () => <Settings className="w-5 h-5 text-gray-500" />;
 
-import OnlineReading from '@/app/ui/OnlineReadin';
+import MyNotes from '@/app/ui/MyNotes';
 
 const Home: React.FC = () => {
   return (
     <>
-    <OnlineReading />
+    <MyNotes />
     
     </>
 

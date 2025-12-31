@@ -13,6 +13,7 @@ export default function Home() {
       <Link href="/RManagement">Resource Management</Link>
       <Link href="/Research">Research</Link>
       <Link href="/OnlineReading">OnlineReading</Link>
+      <Link href="/MyNotes">MyNotes</Link>
     </div>
   );
 }
