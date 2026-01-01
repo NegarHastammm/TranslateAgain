@@ -56,10 +56,11 @@ export default function NotesPage() {
       {/* هدر بالا */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-gray-800">یادداشت‌های من</span>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600">
             <HiOutlineDocumentText className="h-5 w-5" />
           </span>
+          <span className="text-lg font-semibold text-gray-800">یادداشت‌های من</span>
+         
         </div>
 
         <div className="flex items-center gap-3">
@@ -81,7 +82,17 @@ export default function NotesPage() {
 
       {activeTab === 'my-notes' && (
         <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
-          {/* سرچ و دکمه اضافه */}
+       
+
+          {/* جدول یادداشت‌ها */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-100">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ردیف</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام کتاب</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">متن نوشته شده</th>
+                    {/* سرچ و دکمه اضافه */}
           <div className="border-b border-gray-100 p-6">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="relative flex-1 max-w-md">
@@ -105,19 +116,10 @@ export default function NotesPage() {
               </button>
             </div>
           </div>
-
-          {/* جدول یادداشت‌ها */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-100">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ردیف</th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام کتاب</th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">متن نوشته شده</th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
+        
                 {filteredNotes.map((note) => (
                   <tr key={note.id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{note.row}</td>
@@ -126,11 +128,12 @@ export default function NotesPage() {
                       {note.text.substring(0, 50)}...
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    
                       <button
                         onClick={() => setShowNoteCard(showNoteCard === note.id ? null : note.id)}
                         className="text-blue-600 hover:text-blue-900 font-medium transition"
                       >
-                        بیشتر
+            بیشتر
                       </button>
                     </td>
                   </tr>
@@ -145,10 +148,22 @@ export default function NotesPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <button
+          onClick={() => {
+            setShowModal(false);
+            setEditNote(null);
+            setNewNote({ bookName: '', text: '' });
+          }}
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-800 transition"
+        >
+          <span className="sr-only">بستن</span>
+          ×
+        </button>
             <h3 className="text-xl font-semibold text-gray-900 mb-6">
               {editNote ? 'ویرایش یادداشت' : 'افزودن یادداشت جدید'}
             </h3>
             <div className="space-y-4">
+        
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">نام کتاب</label>
                 <input
@@ -175,12 +190,7 @@ export default function NotesPage() {
               </div>
             </div>
             <div className="flex gap-3 justify-end mt-8">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-6 py-2 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition"
-              >
-                انصراف
-              </button>
+          
               <button
                 onClick={editNote ? updateNote : addNote}
                 className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-2 font-medium"
@@ -197,6 +207,17 @@ export default function NotesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-start mb-6">
+              <button
+          onClick={() => {
+            setShowModal(false);
+            setEditNote(null);
+            setNewNote({ bookName: '', text: '' });
+          }}
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-800 transition"
+        >
+          <span className="sr-only">بستن</span>
+          ×
+        </button>
               <h3 className="text-xl font-semibold text-gray-900">یادداشت من</h3>
               <div className="flex gap-2">
                 <button onClick={() => { setShowNoteCard(null); setShowModal(true); setEditNote(notes.find(n => n.id === showNoteCard)!); }} className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">
