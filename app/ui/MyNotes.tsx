@@ -89,7 +89,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
       {/* هدر بالا */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-blue-600">
+           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-[#278760]">
             <HiOutlineDocumentText className="h-5 w-5" />
           </span>
           <span className="text-lg font-semibold text-gray-800">یادداشت‌های من</span>
@@ -103,7 +103,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
               onClick={() => setActiveTab(tab.key)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200
                 ${activeTab === tab.key
-                  ? 'bg-blue-600 text-white shadow-sm hover:shadow-md'
+                  ? 'bg-[#278760] text-white shadow-sm hover:shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
                 }`}
             >
@@ -144,7 +144,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
                   placeholder="جست و جو..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 pl-12 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 pl-12 text-sm focus:border-[#278760] focus:ring-1 focus:ring-[#278740] outline-none transition"
                 />
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -152,7 +152,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
               </div>
               <button
                 onClick={() => { setShowModal(true); setEditNote(null); }}
-                className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-all duration-200"
+                className="flex items-center gap-2 rounded-xl bg-[#278760] px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-[#278740] transition-all duration-200"
               >
                 <HiPlus className="h-5 w-5" />
                 افزودن یادداشت
@@ -179,7 +179,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
       <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm font-medium w-20">
         <button
           onClick={() => setShowNoteCard(showNoteCard === note.id ? null : note.id)}
-          className=" text-blue-600 hover:text-blue-900 font-medium transition w-full text-right"
+          className=" text-[#278760] hover:text-[#278740] font-medium transition w-full text-right"
         >
           بیشتر
         </button>
@@ -218,7 +218,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
             onClick={() => setCurrentPage(page)}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
               currentPage === page
-                ? 'bg-blue-600 text-white shadow-sm'
+                ? 'bg-[#278760] text-white shadow-sm'
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -273,7 +273,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
                     if (editNote) setEditNote({ ...editNote, bookName: e.target.value });
                     else setNewNote({ ...newNote, bookName: e.target.value });
                   }}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#278760] focus:ring-1 focus:ring-[#278740] outline-none transition"
                 />
               </div>
               <div>
@@ -285,7 +285,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
                     if (editNote) setEditNote({ ...editNote, text: e.target.value });
                     else setNewNote({ ...newNote, text: e.target.value });
                   }}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition resize-vertical"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#278760] focus:ring-1 focus:ring-[#278740] outline-none transition resize-vertical"
                 />
               </div>
             </div>
@@ -293,7 +293,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
           
               <button
                 onClick={editNote ? updateNote : addNote}
-                className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-2 font-medium"
+                className="px-6 py-2 rounded-xl bg-[#278760] text-white hover:bg-[#278740] transition flex items-center gap-2 font-medium"
               >
                 ثبت یادداشت
               </button>
@@ -370,7 +370,7 @@ const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
       </div>
 
       {/* دکمه ثبت یادداشت - عرض کامل */}
-      <button className="w-full px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all duration-200 shadow-sm">
+      <button className="w-full px-6 py-3 rounded-xl bg-[#278760] text-white text-sm font-semibold hover:bg-[#278740] transition-all duration-200 shadow-sm">
         ثبت یادداشت
       </button>
     </div>
