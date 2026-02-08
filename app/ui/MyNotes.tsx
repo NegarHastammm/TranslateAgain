@@ -52,10 +52,10 @@ const SavedTexts = () => {
             placeholder="جستجو در متن‌های ذخیره شده..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-12 pl-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full pr-12 pl-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-900 focus:border-transparent transition-all"
           />
         </div>
-        <button className="bg-green-500 text-white px-8 py-3 rounded-xl font-medium hover:bg-green-600 shadow-lg hover:shadow-xl transition-all">
+        <button className="bg-emerald-800 text-white px-8 py-3 rounded-xl font-medium hover:bg-emerald-900 shadow-lg hover:shadow-xl transition-all">
           + ذخیره متن جدید
         </button>
       </div>
@@ -85,7 +85,7 @@ const SavedTexts = () => {
                   <td className="px-6 py-4 text-sm">
                     <button
                       onClick={() => setSelectedText(text)}
-                      className="text-blue-600 hover:text-blue-800 font-medium bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-all"
+                      className="text-emerald-800 hover:text-emerald-900 font-medium bg-emerald-50 px-4 py-2 rounded-lg hover:bg-emerald-100 transition-all"
                     >
                       جزئیات
                     </button>
@@ -117,7 +117,7 @@ const SavedTexts = () => {
               </button>
               <button 
                 onClick={() => setSelectedText(null)}
-                className="px-8 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 shadow-lg hover:shadow-xl transition-all"
+                className="px-8 py-2 bg-emerald-800 text-white rounded-xl hover:bg-emerald-900 shadow-lg hover:shadow-xl transition-all"
               >
                 بستن
               </button>

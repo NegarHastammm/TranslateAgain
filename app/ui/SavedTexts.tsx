@@ -154,7 +154,7 @@ export default function SavedTexts() {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full pr-12 pl-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+          className="w-full pr-12 pl-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-900 text-right"
         />
       </div>
 
@@ -347,7 +347,7 @@ export default function SavedTexts() {
                   setEditingText({ ...editingText, text: e.target.value })
                 }
                 rows={5}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-right resize-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-900 text-right resize-none"
               />
             </div>
 
@@ -361,7 +361,7 @@ export default function SavedTexts() {
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                className="px-4 py-2 bg-emerald-900 text-white rounded-lg hover:bg-emerald-950 transition-colors font-medium"
               >
                 ذخیره
               </button>
@@ -372,3 +372,10 @@ export default function SavedTexts() {
     </div>
   );
 }
+
+
+
+
+
+
+
