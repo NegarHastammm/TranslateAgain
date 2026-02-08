@@ -12,6 +12,8 @@ import CircleChart from "../ui/CircleChart";
 import MountainChart from "../ui/MountainChart";
 import { Home as HomeIconLucide, Settings } from "lucide-react";
 import Image from "next/image";
+import PdfViewerModal from '@/app/ui/PdfViewerModal';
+import SavedTexts from "../ui/SavedTexts";
 const HomeIcon = () => <HomeIconLucide className="w-5 h-5 text-gray-500" />;
 const SettingsIcon = () => <Settings className="w-5 h-5 text-gray-500" />;
 
