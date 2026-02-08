@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { HiOutlineDocumentText, HiPlus, HiPrinter, HiTrash, HiPencil, HiBookmark, HiArrowTopRightOnSquare } from 'react-icons/hi2';
 import { HiDownload } from "react-icons/hi";
 import PdfViewerModal from '@/app/ui/PdfViewerModal';
+import SavedTexts from './SavedTexts';
 
 type TabKey = 'my-notes' | 'saved-pages' | 'saved-texts';
 
@@ -14,120 +15,11 @@ type Note = {
   text: string;
 };
 
-type SavedPage = {
-  id: number;
-  fileName: string;
-  pageNumber: number;
-  previewText?: string;
-  createdAt: string;
-  highlightText?: string;
-};
 
-// داده‌های نمونه متن‌های سیو شده
-const savedTextsData = [  { id: 1, bookName: "ریاضیات پایه", page: 45, text: "فرمول مساحت مثلث...", createdAt: "1403/08/15" },
-  { id: 2, bookName: "فیزیک دانشگاه", page: 128, text: "قانون دوم نیوتن...", createdAt: "1403/08/16" },
-  { id: 3, bookName: "شیمی آلی", page: 89, text: "واکنش‌های آلدئید...", createdAt: "1403/08/17" },
-  { id: 4, bookName: "اقتصاد کلان", page: 201, text: "تورم و بیکاری...", createdAt: "1403/08/18" },
-  { id: 5, bookName: "برنامه‌نویسی", page: 67, text: "توابع بازگشتی...", createdAt: "1403/08/19" },
-];
 
-const SavedTexts = () => {
-  const [savedTexts] = useState(savedTextsData);
-  const [selectedText, setSelectedText] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredTexts = savedTexts.filter(text =>
-    text.bookName.includes(searchTerm) || 
-    text.text.includes(searchTerm) ||
-    text.page.toString().includes(searchTerm)
-  );
 
-  return (
-    <div className="space-y-6">
-      {/* Search & Add */}
-      <div className="flex gap-4 justify-between items-center flex-wrap">
-        <div className="relative flex-1 max-w-md">
-          <input
-            type="text"
-            placeholder="جستجو در متن‌های ذخیره شده..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-12 pl-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-900 focus:border-transparent transition-all"
-          />
-        </div>
-        <button className="bg-emerald-800 text-white px-8 py-3 rounded-xl font-medium hover:bg-emerald-900 shadow-lg hover:shadow-xl transition-all">
-          + ذخیره متن جدید
-        </button>
-      </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">نام کتاب</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">صفحه</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">متن ذخیره شده</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">عملیات</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filteredTexts.map((text) => (
-                <tr key={text.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">{text.bookName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{text.page}</td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-600 max-w-xs truncate" title={text.text}>
-                      {text.text}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <button
-                      onClick={() => setSelectedText(text)}
-                      className="text-emerald-800 hover:text-emerald-900 font-medium bg-emerald-50 px-4 py-2 rounded-lg hover:bg-emerald-100 transition-all"
-                    >
-                      جزئیات
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Modal */}
-      {selectedText && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-8 border-b border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedText.bookName}</h3>
-              <p className="text-sm text-gray-500">صفحه {selectedText.page} • {selectedText.createdAt}</p>
-            </div>
-            <div className="p-8">
-              <p className="text-lg text-gray-800 whitespace-pre-wrap leading-relaxed">{selectedText.text}</p>
-            </div>
-            <div className="p-8 pt-0 border-t border-gray-100 flex gap-3 justify-end">
-              <button className="px-6 py-2 text-gray-600 hover:text-gray-900 bg-gray-100 rounded-xl transition-all">
-                ویرایش
-              </button>
-              <button className="px-6 py-2 text-red-600 hover:text-red-800 bg-red-50 rounded-xl transition-all">
-                حذف
-              </button>
-              <button 
-                onClick={() => setSelectedText(null)}
-                className="px-8 py-2 bg-emerald-800 text-white rounded-xl hover:bg-emerald-900 shadow-lg hover:shadow-xl transition-all"
-              >
-                بستن
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 
 const tabs: { key: TabKey; label: string }[] = [
@@ -305,6 +197,8 @@ export default function NotesPage() {
     }, ...prev]);
   };
 
+  
+
   return (
     <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       {/* PDF Modal */}
@@ -354,15 +248,10 @@ export default function NotesPage() {
           
           {/* Header with Search */}
           <div className="border-b border-gray-100 p-6">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-[#278760]">
-                  <HiBookmark className="h-5 w-5" />
-                </span>
-                <h2 className="text-lg font-semibold text-gray-800">صفحات ذخیره شده</h2>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center ">
+        
 
-              <div className="relative flex-1 max-w-md">
+              <div className="relative flex-1 max-w-md justify-start">
                 <input
                   type="text"
                   placeholder="جستجو در صفحات ذخیره شده..."
